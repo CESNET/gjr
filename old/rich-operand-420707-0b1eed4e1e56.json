@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "rich-operand-420707",
+  "private_key_id": "0b1eed4e1e56297ab4c5737c6e0c8f19651fb764",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDeJ4zdkHX5tgIz\nwRQErhFJznc/Ay8oPrjD+gDRJMx8bBtJ5Egxf4ZkMDpPkuGEItxgm0xDF5zCIE1J\nwW0yQaElLdOKdKqkErrW3qr2zv9OEnhQprsEJEl9DR8Vt61eK0Oa8lbka0zNKvra\nnEZM50QXZGDYskDHZwL+kEzINZOo2uZx6h+d+TC0ukiONzbsIY7r3qOOdCeVWgH4\niU8l/RthhiXbxlDOtOTro753KrXv1YS7huPP95T8v6FT6B2drfZjSJGAFCW+wwT1\nqfZQR4N57N5YLqfghBmjPwm7r6eDflGcdtcvwJrPVvWtZYn8K89bVz9jCx0AivuI\nEKS71uQ9AgMBAAECggEACezabku1+aIYFxfZPRxJyXJgAYCy6qlit97DipSKTkTG\nM1bvosZ/ypodANEfIjgsgGRv08+KQWIQEeuCZWxpNrAFc3oi5ZGwp0jrentlDKfm\nmDPaxySX4+5iJSY/qKVmL9YD69CfbcstyfaRbX4nnKPvb78HBeGkUJtB0vAR2MlZ\nkom1QZ9eRaSmeyEysO4K3K9WhAyij6eTMrsDTsoIkwarrE38IqcDh12d5F6QZ6XJ\nFZ1YMdpIPr+exqPK5jIt6iwgRti5qu0tK9VQboTxxPUYm8vzd5zV89CvyV8nLyuJ\nw9OD0OpFDZdbIaQGJspxC+3dR4efCNYaMr2VUrq6AQKBgQDyMawVKgVHmnYmlr4a\nzevGob/ydTelUJCEp0m8nv9pojFo7oO0oO+0m0cV/k9pWGInHhdq+OyF0oLE1Lcf\ngjVdhsK90Ai7jSxQjV1jOBuwrwiS2N3TSeN7sKUrXrGYgJDZO+7bFicwhfxLAqsB\nT25cmVTaeCprmeR0v/Aal01rWQKBgQDq0XEeciZHykXe1qB4QoR9NaS0/8fSVLAP\nTTVAiJ9S4PiGG/qHI7PchWuWHNavXvQASlZ7tUC71wO4+hIVA/HxT8EQ+sxrRflR\nsjlRArewWmECrRS95PCRTPMVcKt5eZjBLQJroA/M6/D8anPoQPjqgcE9RsbwT9Gg\nlnwplz43hQKBgCCQpT7DQ6p5DmHp6u3Xulge75w+Ppkv1/6+L5/5EQa3FEWzrGnh\nKdny9v/yDeNwSuJPnX54sfTcdVDZ+TV3YI2OzSiQjFwLg2XhXCk3JiH/pvt3xXvf\nd4LuIYdPWDnVL6TF9jvnIqXXnjDHzw6CC6jPxSUK+0k0jA9Wr4YjyfkhAoGAK5gc\nnyFkF/nmhNtlyU3YGQLHhE7kQxkz4nNcCpISuilIGmXBWit3rd4bPjA2bzJ6rD8g\n1TCuRvFBIKtUhhBIb5t15XgaUWQZSGCFIZQWlCgDUKLfce2598/IZVeYjiHUCTEY\n/PAnXs0C3WnKAPlm/Op//KdSMbUv3tdxT6tjgp0CgYBgvqwcQSCbyDK09P1GlzWo\nx2nYSwZTjx2/CuUrU9Z7u9rPjA8Mf99AnlhX5rWnAGmhUiYbHSZWd3PDYQ4RsWxd\n2k/J+XAD3w082gwi2H0B9bRTApg52G9GN/zYSu0pZRCX10EWq7O4ZFVc18zOkhEF\ny1bOe3gGR/DjsQSrOoxdow==\n-----END PRIVATE KEY-----\n",
+  "client_email": "tomasvondrak@rich-operand-420707.iam.gserviceaccount.com",
+  "client_id": "115051051573227515963",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/tomasvondrak%40rich-operand-420707.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
