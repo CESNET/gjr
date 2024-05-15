@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div id="map"></div>
+
+{{ pulsars|json_script:"pulsar-json" }}
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let map = createMap([50, 8], 5);
+        addLegend(map);
+        add_galaxy_eu_node_and_its_polylines(map, galaxy_icon);
+        let pulsars = JSON.parse(document.getElementById('pulsar-json').textContent)
+
+        // let markerFeatureGroup = L.featureGroup().addTo(map);
+        let markerClusterGroup = L.markerClusterGroup().addTo(map);
+
+        for (let pulsar of pulsars) {
+            // L.marker([pulsar.latitude, pulsar.longitude]).addTo(markerFeatureGroup);
+            markerClusterGroup.addLayer(L.marker([pulsar.latitude, pulsar.longitude]));
+        }
+
+        // setInterval(() => updateMarkers(markerFeatureGroup), 2000)
+        setInterval(() => updateMarkers(markerClusterGroup), 2000)
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,51 @@
+html, body, #map {
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+.legend {
+    border: 2px solid black;
+    border-radius: 10px;
+    width: 180px;
+    height: 265px;
+    background: rgba(240, 240, 240, 0.4);
+}
+
+.legend i {
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    float: left;
+    margin-left: 7px;
+    margin-right: 7px;
+}
+
+.legend p, strong {
+    margin-left: 7px;
+    text-align: left;
+}
+
+#map .runner_icon {
+    text-align: center;
+    padding: 4px;
+    border-radius: 50%;
+    overflow: hidden;
+    font-size: 18px;
+    font-family: 'sans-serif';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#map .runner_icon_green {
+    background: rgba(62, 164, 16, 0.4);
+}
+
+#map .runner_icon_orange {
+    background: rgba(255, 148, 42, 0.4);
+}
+
+#map .runner_icon_red {
+    background: rgba(255, 0, 0, 0.4);
+}
