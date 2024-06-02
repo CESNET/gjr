@@ -75,7 +75,7 @@ function add_galaxy_eu_node_and_its_polylines(map, galaxy_icon_path) {
     });
     // Galaxy servers points
     const galaxies = [
-        { name: 'Europe - galaxy.eu', coordinates: [56.7584994, 0.7277719] },
+        { name: 'Europe - galaxy.eu', coordinates: [51.8897767, 10.4616589] },
         { name: 'USA - galaxy.org', coordinates: [43.000000, -75.000000] },
         { name: 'Australia - galaxy.au', coordinates: [-33.865143, 151.209900] },
         { name: 'Czechia - galaxy.cz', coordinates: [50.2117769, 15.3615611] }
