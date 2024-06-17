@@ -2,27 +2,48 @@ import random
 import time
 from django.core.management.base import BaseCommand
 from core.models import Pulsar
-from influxdb_client import InfluxDBClient
-
-client = InfluxDBClient(url="https://influxdb.galaxyproject.eu:8086",
-                        )
+from influxdb import InfluxDBClient
 
 class Command(BaseCommand):
-    help = 'Simulate pulsar job computing'
+    help = "Simulate pulsar job computing"
 
     def handle(self, *args, **options):
-        # Define the range of latitude and longitude variation
-        lat_lon_var = 0.1  # 0.1 degrees is approximately 11 km
+        client = InfluxDBClient(host="influxdb.galaxyproject.eu", port=8086, username="esg", password="password", database="galaxy", ssl=True, verify_ssl=True)
+
         job_num_var = 10
 
         while True:
             print("Pulsar job number updating...")
 
-            for pulsar in Pulsar.objects.all():
-                # pulsar.latitude = pulsar.latitude + random.uniform(-lat_lon_var, lat_lon_var)
-                # pulsar.longitude = pulsar.longitude + random.uniform(-lat_lon_var, lat_lon_var)
-                job_num_change = random.randint(-job_num_var, job_num_var)
-                pulsar.job_num = pulsar.job_num + job_num_change if pulsar.job_num + job_num_change >= 0 else 0
-                pulsar.save()
+            # samotné číslo by bylo lepší získat už na úrovni databáze, potom budu ještě potřebovat ty destinations
+            results = client.query(
+                'SELECT last("count") FROM "queue_by_destination" WHERE ("destination_id" =~ /^pulsar_.*/) GROUP BY "destination_id", "state"'
+            )
 
-            time.sleep(2)
+            # Extract raw results
+            raw_results = results.raw
+
+            # Check if the series field exists in the raw results
+            if 'series' in raw_results:
+                for series in raw_results['series']:
+                    destination_id = series['tags']['destination_id']
+                    state = series['tags']['state']
+                    last_count = series['values'][0][1]  # the 'last' value is the second element in the values list
+
+                    # Output or process each row
+                    print(f"Destination ID: {destination_id}, State: {state}, Count: {last_count}")
+
+                    update_pulsar_job_num(self, destination_id, last_count)
+            else:
+                print("No data found in the query results.")
+
+            time.sleep(10)
+
+def update_pulsar_job_num(self, pulsar_name, job_num):
+    try:
+        pulsar = Pulsar.objects.get(name=pulsar_name)
+        pulsar.job_num = job_num
+        pulsar.save()
+        print(f"Updated {pulsar.name}: new job_num is {pulsar.job_num}")
+    except Pulsar.DoesNotExist:
+        print(f"Pulsar with name {pulsar_name} does not exist.")
