@@ -29,8 +29,7 @@ function updateMarkers(markerFeatureGroup) {
                     iconSize: [icon_size, icon_size]
                 })
             }).addTo(markerFeatureGroup)
-              .bindPopup(`<b>Runner name: ${pulsar.name}<br>Job number: ${pulsar.job_num}</b>`)
-              .bindTooltip(`<b>${pulsar.name}</b>`);
+              .bindTooltip(`<b>Runner name: ${pulsar.name}<br>Job number: ${pulsar.job_num}</b>`);
         })
     })
 }
@@ -70,20 +69,20 @@ function add_galaxy_eu_node_and_its_polylines(map, galaxy_icon_path) {
     });
     // Galaxy servers points
     const galaxies = [
-        { name: 'Europe - galaxy.eu', coordinates: [51.8897767, 10.4616589] }/*,
+        { name: 'usegalaxy.eu', coordinates: [51.8897767, 10.4616589] }/*,
         { name: 'USA - galaxy.org', coordinates: [43.000000, -75.000000] },
         { name: 'Australia - galaxy.au', coordinates: [-33.865143, 151.209900] },
         { name: 'Czechia - galaxy.cz', coordinates: [50.2117769, 15.3615611] }*/
     ];
 
     galaxies.forEach(galaxy => {
-        L.marker(galaxy.coordinates, {icon: galaxy_icon}).addTo(map).bindPopup(`<b>${galaxy.name}</b>`).bindTooltip(`<b>${galaxy.name}</b>`);
+        L.marker(galaxy.coordinates, {icon: galaxy_icon}).addTo(map).bindPopup(`<a href="https://${galaxy.name}"><b>${galaxy.name}</b></a>`);
     });
 
     // lines from galaxy to pulsars
     fetch('/pulsar-positions/').then(response => response.json()).then(data => {
         data.pulsars.forEach((pulsar, idx) => {
-            L.polyline([galaxies.find(p => p.name == "Europe - galaxy.eu").coordinates, [pulsar.latitude, pulsar.longitude]], { color: 'black' })
+            L.polyline([galaxies.find(p => p.name == "usegalaxy.eu").coordinates, [pulsar.latitude, pulsar.longitude]], { color: 'black' })
                 .addTo(map)
         })
     })
