@@ -49,3 +49,7 @@ html, body, #map {
 #map .runner_icon_red {
     background: rgba(255, 0, 0, 0.4);
 }
+
+#map .runner_icon_empty {
+    background: rgba(255, 255, 255, 0.3);
+}

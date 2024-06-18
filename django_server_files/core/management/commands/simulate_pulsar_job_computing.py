@@ -8,14 +8,32 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Define the range of job_num variation
-        job_num_var = 10
+        queued_num_var = 9
+        running_num_var = 5
+        failed_num_var = 3
+
+        self.inicialize_simulation()
 
         while True:
             print("Pulsar job number updating...")
 
             for pulsar in Pulsar.objects.all():
-                job_num_change = random.randint(-job_num_var, job_num_var)
-                pulsar.job_num = pulsar.job_num + job_num_change if pulsar.job_num + job_num_change >= 0 else 0
+                pulsar.queued_jobs = self.update_pulsar(pulsar.queued_jobs, queued_num_var)
+                pulsar.running_jobs = self.update_pulsar(pulsar.running_jobs, running_num_var)
+                pulsar.failed_jobs = self.update_pulsar(pulsar.failed_jobs, failed_num_var)
                 pulsar.save()
 
             time.sleep(2)
+
+    def update_pulsar(self, metric_to_update, metric_variance):
+        job_num_change = random.randint(-(metric_variance+1), metric_variance)
+        return metric_to_update + job_num_change if metric_to_update + job_num_change >= 0 else 0
+
+    def inicialize_simulation(self):
+        for pulsar in Pulsar.objects.all():
+                pulsar.queued_jobs = random.randint(30, 70)
+                pulsar.save()
+                pulsar.running_jobs = random.randint(15, 30)
+                pulsar.save()
+                pulsar.failed_jobs = random.randint(8, 15)
+                pulsar.save()

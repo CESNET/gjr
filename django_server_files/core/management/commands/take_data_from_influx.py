@@ -10,7 +10,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         client = InfluxDBClient(host="influxdb.galaxyproject.eu", port=8086, username="esg", password="password", database="galaxy", ssl=True, verify_ssl=True)
 
-        job_num_var = 10
+        for pulsar in Pulsar.objects.all():
+                pulsar.queued_jobs = 0;
+                pulsar.running_jobs = 0;
+                pulsar.failed_jobs = 0;
+                pulsar.save()
 
         while True:
             print("Pulsar job number updating...")
@@ -33,17 +37,22 @@ class Command(BaseCommand):
                     # Output or process each row
                     print(f"Destination ID: {destination_id}, State: {state}, Count: {last_count}")
 
-                    update_pulsar_job_num(self, destination_id, last_count)
+                    update_pulsar_job_num(self, destination_id, state, last_count)
             else:
                 print("No data found in the query results.")
 
             time.sleep(10)
 
-def update_pulsar_job_num(self, pulsar_name, job_num):
+def update_pulsar_job_num(self, pulsar_name, state, job_num):
     try:
         pulsar = Pulsar.objects.get(name=pulsar_name)
-        pulsar.job_num = job_num
+        if state == 'queued':
+            pulsar.queued_jobs = job_num
+        if state == 'running':
+            pulsar.running_jobs = job_num
+        if state == 'failed':
+            pulsar.failed_jobs = job_num
         pulsar.save()
-        print(f"Updated {pulsar.name}: new job_num is {pulsar.job_num}")
+        print(f"Updated {pulsar.name}: new job_num is {job_num}")
     except Pulsar.DoesNotExist:
         print(f"Pulsar with name {pulsar_name} does not exist.")
