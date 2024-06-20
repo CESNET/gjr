@@ -23,7 +23,7 @@ class Command(BaseCommand):
                 pulsar.failed_jobs = self.update_pulsar(pulsar.failed_jobs, failed_num_var)
                 pulsar.save()
 
-            time.sleep(2)
+            time.sleep(3.5)
 
     def update_pulsar(self, metric_to_update, metric_variance):
         job_num_change = random.randint(-(metric_variance+1), metric_variance)
@@ -32,8 +32,6 @@ class Command(BaseCommand):
     def inicialize_simulation(self):
         for pulsar in Pulsar.objects.all():
                 pulsar.queued_jobs = random.randint(30, 70)
-                pulsar.save()
                 pulsar.running_jobs = random.randint(15, 30)
-                pulsar.save()
                 pulsar.failed_jobs = random.randint(8, 15)
                 pulsar.save()

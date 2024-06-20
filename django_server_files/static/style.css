@@ -51,5 +51,5 @@ html, body, #map {
 }
 
 #map .runner_icon_empty {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(230, 230, 255, 0.8);
 }

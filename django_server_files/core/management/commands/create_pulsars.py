@@ -12,8 +12,10 @@ class Command(BaseCommand):
         add_galaxy(galaxy_uk_pulsars, 'usegalaxy.uk')
         add_galaxy(galaxy_se_pulsars, 'usegalaxy.se')
         add_galaxy(galaxy_lv_pulsars, 'usegalaxy.lv')
-        add_galaxy(galaxy_au_pulsars, 'usegalaxy.au')
-        add_galaxy(galaxy_org_pulsars, 'usegalaxy.org')
+        # add_galaxy(galaxy_au_pulsars, 'usegalaxy.au')
+        # add_galaxy(galaxy_org_pulsars, 'usegalaxy.org')
+        add_galaxy(galaxy_fr_pulsars, 'usegalaxy.fr')
+        add_galaxy(galaxy_sp_pulsars, 'usegalaxy.sp')
 
 def add_random_pulsars():
     NUM_PULSARS_TO_GENERATE = 5
@@ -53,12 +55,13 @@ galaxy_eu_pulsars = [
     # Freiburg - Snajay's pulsar
     ("pulsar_sanjay_tpv", 48.1731131, 9),
     # Rennes - GenOuest bioinformatics
-    ("pulsar_fr01_tpv", 48.1107856, 1.6836897),
+    ("pulsar_fr01_tpv", 49.2204433, 3.9920847),
     # Bari - RECAS
     ("pulsar_it_tpv", 41.9028, 12.4964),
     # Bari - RECAS 2
     ("pulsar_it02_tpv", 42, 12.4964),
     # Bari - INFN
+    ("pulsar_it03_tpv", 41.1198900, 16.8570750),
     # Brussel - VIB
     ("pulsar_be_tpv", 50.8476, 4.3572),
     # Prague - MetaCentrum
@@ -74,7 +77,9 @@ galaxy_eu_pulsars = [
     # Krakow - Cyfronet
     ("pulsar_cyf01_tpv", 52.237049, 21.017532),
     # Herakilon-Crete - HCMR
-    ("pulsar_hcmr01_tpv", 35.3369294, 25.1281525)
+    ("pulsar_hcmr01_tpv", 35.3369294, 25.1281525),
+    # Greek FAIR-Ease
+    ("pulsar_greek_tpv", 38.0217778, 23.7427561)
 ]
 
 galaxy_uk_pulsars = [
@@ -114,4 +119,16 @@ galaxy_au_pulsars = [
     ("pulsar_melbourne", -37.8909764, 145.1617197),
     ("pulsar_adelaide", -34.7573064, 138.7039417),
     ("pulsar_brisbane", -27.4545069, 152.9668675)
+]
+
+galaxy_fr_pulsars = [
+    ("pulsar_rennes", 48.1140083, -1.6768606),
+    ("pulsar_marseille", 43.2843767, 5.3434031),
+    ("pulsar_bordeaux", 44.8122131, -0.6221731)
+]
+
+galaxy_sp_pulsars = [
+    ("pulsar_barcelona", 41.3883211, 2.1353953),
+    ("pulsar_sevilla", 37.4172611, -5.9944875),
+    ("pulsar_santander", 43.4879736, -3.8191944)
 ]

@@ -1,6 +1,18 @@
 function createMap(center, zoom) {
     let map = L.map('map').setView(center, zoom);
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
+
+    // L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    // L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}').addTo(map);
+
+    // L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+    // L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+    // L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
+
     return map
 }
 
@@ -114,6 +126,10 @@ function addLegendPie(map) {
     legend.addTo(map);
 }
 
+function get_rand_color() {
+    return "#"+(((1+Math.random())*(1<<24)|0).toString(16)).substr(-6);
+}
+
 function add_galaxy_eu_node_and_its_polylines(map, galaxy_icon_path) {
     var galaxy_icon = L.icon({
         iconUrl: galaxy_icon_path,
@@ -121,15 +137,18 @@ function add_galaxy_eu_node_and_its_polylines(map, galaxy_icon_path) {
         iconAnchor:   [22, 55],
         popupAnchor:  [-3, -76]
     });
+
     // Galaxy servers points
     const galaxies = [
-        { name: 'usegalaxy.eu', coordinates: [48.9731131, 9.3016003] },
-        { name: 'usegalaxy.org', coordinates: [43.000000, -75.000000] },
-        { name: 'usegalaxy.au', coordinates: [-33.865143, 151.209900] },
-        { name: 'usegalaxy.cz', coordinates: [50.2117769, 15.3615611] },
-        { name: 'usegalaxy.uk', coordinates: [51.5188083, 0.1403647] },
-        { name: 'usegalaxy.se', coordinates: [59.8583539, 17.6291306] },
-        { name: 'usegalaxy.lv', coordinates: [56.9479739, 24.0932114] }
+        { name: 'usegalaxy.eu', coordinates: [48.9731131, 9.3016003], color: get_rand_color() },
+        // { name: 'usegalaxy.org', coordinates: [43.000000, -75.000000], color: get_rand_color() },
+        // { name: 'usegalaxy.au', coordinates: [-33.865143, 151.209900], color: get_rand_color() },
+        { name: 'usegalaxy.cz', coordinates: [50.2117769, 15.3615611], color: get_rand_color() },
+        { name: 'usegalaxy.uk', coordinates: [51.5188083, 0.1403647], color: get_rand_color() },
+        { name: 'usegalaxy.se', coordinates: [59.8583539, 17.6291306], color: get_rand_color() },
+        { name: 'usegalaxy.sp', coordinates: [40.616775, -3.703790], color: get_rand_color() },
+        { name: 'usegalaxy.fr', coordinates: [48.6107856, 1.6836897], color: get_rand_color() },
+        { name: 'usegalaxy.lv', coordinates: [56.9479739, 24.0932114], color: get_rand_color() }
     ];
 
     galaxies.forEach(galaxy => {
@@ -139,8 +158,11 @@ function add_galaxy_eu_node_and_its_polylines(map, galaxy_icon_path) {
     // lines from galaxy to pulsars
     fetch('/pulsar-positions/').then(response => response.json()).then(data => {
         data.pulsars.forEach((pulsar, idx) => {
-            L.polyline([galaxies.find(p => p.name == pulsar.galaxy).coordinates, [pulsar.latitude, pulsar.longitude]], { color: 'black' })
-                .addTo(map)
+            L.polyline([
+                galaxies.find(p => p.name == pulsar.galaxy).coordinates,
+                [pulsar.latitude, pulsar.longitude]],
+                { color: galaxies.find(p => p.name == pulsar.galaxy).color }
+            ).addTo(map)
         })
     })
 }
