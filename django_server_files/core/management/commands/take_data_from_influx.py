@@ -1,14 +1,18 @@
 import random
 import time
+import os
 from django.core.management.base import BaseCommand
 from core.models import Pulsar
 from influxdb import InfluxDBClient
 
 class Command(BaseCommand):
-    help = "Simulate pulsar job computing"
+    help = "Pulsar job computing from InfluxDB"
+
+    # password from environment variable
+    influxdb_password = os.environ.get('INFLUXDB_GALAXY_EU_PASSWORD')
 
     def handle(self, *args, **options):
-        client = InfluxDBClient(host="influxdb.galaxyproject.eu", port=8086, username="esg", password="password", database="galaxy", ssl=True, verify_ssl=True)
+        client = InfluxDBClient(host="influxdb.galaxyproject.eu", port=8086, username="esg", password=self.influxdb_password, database="galaxy", ssl=True, verify_ssl=True)
 
         for pulsar in Pulsar.objects.all():
                 pulsar.queued_jobs = 0;

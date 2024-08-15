@@ -1,0 +1,131 @@
+# Galaxy-Pulsar Traffic Visualisation Tasks
+
+## Task Table
+
+Number;      Name of task;                       Time to be done;        Need for discussion;        Priority;       Needed data
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1;           PBS visualisation;                  2 day;                  No;                         TOP;            None
+2;           Pulsar circle size;                 1 week;                 Yes;                        None;           None
+3;           World wide data;                    1 months;               No;                         TOP;            Need for message a lot of people
+4;           Color of pulsars;                   2 week;                 Yes;                        None;           None
+5;           Different quantities;               2 weeks;                Yes;                        None;           Need to collect aditional data
+6;           Fullfillness of pulsar;             questionable time;      Yes;                        None;           Need to collect aditional data
+7;           Rings;                              1 week;                 Yes;                        TOP;            None
+8;           Line thickness;                     2 week;                 Yes;                        TOP;            None
+9;           Selection interface;                1 week;                 No;                         TOP;            None
+10;          Only Pulsars;                       2 days;                 No;                         None;           None
+11;          History view;                       1 month;                Yes;                        TOP;            Need to collecting data to some my local database
+12;          User view;                          questionable time;      Yes;                        None;           Not sure if it is possible to collect these data soon
+13;          Align with Key Usage Indicators;    ???
+
+## Task information
+
+1 PBS visualisation (not only pbs - dávkový systém, ale všechny destinace -> může jich být více různých)
+- visualise not only pusars but also galaxy pbs as pie chart
+- depends on design on map
+- velikost kolečka podle počtu jader cpu asi spíš než počet jobů (stačí sbírat a zobrazovat různě)
+    - takovéto informace se zatím můžou dávat ručně, ale dávat je někam bokem do databáze, aby je pak mohla třeba zadávat nějaká další sledovací aplikace
+    - zatím můžu staticky říct, získávání odložím
+
+2 Pulsar circle size
+– can also represent size of cluster - počet jader (Aleš to tak chce)
+    - depends on how fast I can get sizes of clusters
+        (connect pulsars with same location and get size from this?
+        And aggregate all iformation from this into one pie chart)
+    [plus] we can get more information and map will be clearer
+    [minus] map will be more static
+- další informace k tomuto v bodu 1
+
+3 World wide data
+- collect data about galaxies and pulsars from the whole world
+- messanging can be done during other work
+- není urgentní
+- nejdříve musí být aplikace hotová a udělaný návod co potřebujeme a pak jim to jen poslat, bez toho neotravovat
+
+4 Color of pulsars
+– not only very current state but also sliding interval (proportion of failing jobs in last 24h, week, …)
+    - need for storing some additional data about what is going on in interval
+    [plus] probably more useful information, not actual number jobs, but more abstracted statictics for pulsars
+    [minus] maybe more cryptic for newcomers than just number of jobs, but not that much
+- udělat u toho čas který zobrazujeme i časové okno
+    - hejbátko s časem
+    - hejbátko s velikostí okna, který sleduju (poslední sekunda, týden, měsíc - za tuhle dobu běželo tolik a tolik jobů a tolik jich failnulo - jak moc bude svižné? -> předdefinované dotazy)
+    - nagenerovat si historická data do databáze a pak uvidím
+
+5 Different quantities
+– current load, total capacity, free, resource utilization, number of unique users…
+- need for discussion on what we want, what make sense and where to find it
+- don't duplicate functionality of grafana
+- nepřehánět na začátku, klidně zatím odložit než budeme mít jasné, co chceme
+- stačí jeden prstenec navíc
+- počet jobů vs počet použitých cpu
+- mohla by k tomu přibýt ještě šedá barva, která by právě zobrazovala ten počet nevyužitých vs. využitých jader (do toho současného pie chartu)
+- do historie se můžeme bavit o počtu úspěšných, počtu failů a jinak + délka fronty???
+    - oddělit - v současnosti je nesmysl počet zhavarovaných - to je historická informace, protože teď tam už není
+    - naopak čekající joby jsou pouze aktuální informace, nepatří do historie
+    - v momentálním okamžiku - kolik běží, kolik čeká, kolik je volných nepoužitých cpu
+    - za delší období - kolik jich zhavarovalo, kolik jich bylo úspěšných, průměrná vytíženost clusteru a průměrný počet čekajících v okně
+    - přepínání, necpat všechno zaráz
+
+6 Fullfillness of pulsar
+- destination declares "allow X % of foreign users", show how it is fulfilled
+- need for lot of information we do not even have stored anywhere
+    (pulsar owners need to give it, but do they exactly know it? - může říct správce zdroje - statické informace)
+- nechat plavat
+
+7 Rings
+- few rings instead of circle can visualize more quantities simultaneously
+- probably not that hard, there are similar ideas on internet
+- prototype with random data can be made without need of discussion
+- we need to discuss what we would like to visualise like this (probably more then one ring is too much)
+
+8 Line thickness vs běhající kuličky jobů
+- traffic intensity between Galaxy and Pulsar displayed as line thickness
+- more easy on both implementing and app aguility
+    way than moving circles of jobs between galaxy and nodes
+- the question is if it shoud be stat of how many jobs are right now computed in node
+    or it would be some history on how often jobs are sended to this pulsar
+    (the second option makes more sence to me but needs again some history
+    and it is similar on what we are visualizing on pulsars, but that is not bad at all)
+- kuličky jobů jsou vizuálně atraktivní
+- nespěchá
+- počet jobů za den se dá projevit na tlouštce čáry
+
+9 Selection interface
+- More Galaxies – map can become messy, provide selection interface (checkboxes up to dozen, search for more)
+- checkboxes up to dozen, search for more
+- co njedřív
+
+10 Only Pulsars
+- option to show only Pulsars, not Galaxies (for clarity of display)
+
+11 History view
+- add my own local database for historical data and make slide button or as a first option just button for playing history
+– not only snapshot in time (meteo radar) but also aggregation (max, avg, sum) over some interval
+- history views can be precomputed and displayed statically (more or less)
+- probráno výše
+
+12 User view
+- ("just my jobs"): difficult to impossible, we can't match the user identity easily
+- "show me all my jobs over all Galaxies", global user id would be needed; there is related issue #....
+
+13 Align with Key Usage Indicators
+- přidat do vizualizace statistiky ohledně využití jednotlivých strojů (galaxy a pulsarů) - měly by být součástí ESG (procenta využití procesorového času na galaxy úlohy atd.)
+
+14 Hezčí clustery bodů
+- agregované clustery nedávat pouze počet vnitřních uzlů, ale promítat aji celkové informace v daném clusteru také piechartem, nebo překlikávací a velikost zase celkový počet cpu
+
+15 celkově dát dohromady ty stejné lokality asi?
+
+Other notes:
+
+# Galaxy Radio Telescope (GRT)
+– central service to gather various metrics on usegalaxy.*, can be used as data source
+- are these data somewhere already accesible?
+- when we can move to this?
+- https://github.com/usegalaxy-eu/galactic-radio-telescope
+
+# Many things can be added to InfluxDB if needed (just beware of user privacy)
+- just write to Sanjay
+
+# Many user views simultaneously can easily overload web server and database
