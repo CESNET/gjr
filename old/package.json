@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "leaflet": "^1.9.4",
-    "leaflet.motion": "^0.3.2"
-  }
-}

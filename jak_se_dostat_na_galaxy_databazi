@@ -1,4 +1,0 @@
-ssh tomasvondrak@alfrid.meta.zcu.cz
-kinit -c /tmp/admin tomasvondrak@ADMIN.META
-KRB5CCNAME=/tmp/admin ssh root@galaxy-cz.grid.cesnet.cz
-gxadmin query queue-time toolshed.g2.bx.psu.edu/repos/nilesh/rseqc/rseqc_geneBody_coverage/2.6.4.3
