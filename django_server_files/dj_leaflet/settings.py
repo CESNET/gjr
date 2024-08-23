@@ -16,7 +16,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG') == 'True'
 
-ALLOWED_HOSTS = ['cloud255-46.cerit-sc.cz', '127.0.0.1']
+ALLOWED_HOSTS = ['cloud255-46.cerit-sc.cz', '0.0.0.0', '127.0.0.1']
 
 
 # Application definition
@@ -118,4 +118,4 @@ STATICFILES_DIRS  = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_TRUSTED_ORIGINS = ['http://cloud255-46.cerit-sc.cz']
+CSRF_TRUSTED_ORIGINS = ['https://cloud255-46.cerit-sc.cz']
