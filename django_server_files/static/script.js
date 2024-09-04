@@ -35,9 +35,10 @@ function updateMarkersPie(markerFeatureGroup) {
             var maximal_icon_size = 200;
             var minimal_icon_size = 35;
             var icon_size = pulsar_job_sum + minimal_icon_size > maximal_icon_size ? maximal_icon_size : pulsar_job_sum + minimal_icon_size;
+            var minichart;
 
             if (pulsar_job_sum > 0) {
-                L.minichart([pulsar.latitude, pulsar.longitude], {
+                minichart = L.minichart([pulsar.latitude, pulsar.longitude], {
                     type: "pie",
                     data: [pulsar.queued_jobs, pulsar.running_jobs, pulsar.failed_jobs],
                     maxValues: "auto",
@@ -45,18 +46,39 @@ function updateMarkersPie(markerFeatureGroup) {
                     width: icon_size,
                     labels: "auto",
                     transitionTime: 0
-                }).addTo(markerFeatureGroup)
-                .bindTooltip(`runner name: <b>${pulsar.name}</b><br>queued jobs: <b>${pulsar.queued_jobs}</b><br>running jobs: <b>${pulsar.running_jobs}</b><br>failed jobs: <b>${pulsar.failed_jobs}</b>`);
+                });
             } else {
-                L.marker([pulsar.latitude, pulsar.longitude], {
+                minichart = L.marker([pulsar.latitude, pulsar.longitude], {
                     icon: L.divIcon({
                         className: 'runner_icon runner_icon_empty',
                         html: '<b>' + pulsar_job_sum + '</b>',
                         iconSize: [icon_size, icon_size]
                     })
-                }).addTo(markerFeatureGroup)
-                .bindTooltip(`runner name: <b>${pulsar.name}</b><br>queued jobs: <b>${pulsar.queued_jobs}</b><br>running jobs: <b>${pulsar.running_jobs}</b><br>failed jobs: <b>${pulsar.failed_jobs}</b>`);
+                });
             }
+
+            minichart.addTo(markerFeatureGroup);
+            minichart.bindTooltip(L.tooltip([pulsar.latitude, pulsar.longitude], {
+                content: `runner name: <b>${pulsar.name}</b><br>queued jobs: <b>${pulsar.queued_jobs}</b><br>running jobs: <b>${pulsar.running_jobs}</b><br>failed jobs: <b>${pulsar.failed_jobs}</b>`,
+                offset: L.point((icon_size / 2), -(icon_size / 2)),
+                direction: 'right'
+            }));
+            // event listeners
+            minichart.on('mouseover', function () {
+                minichart.setOptions({
+                    width: icon_size * 1.2,
+                    colors: ["rgba(255, 148, 42, 0.8)", "rgba(62, 164, 16, 0.8)", "rgba(255, 0, 0, 0.8)"],
+                    pane: 'tooltipPane'
+
+                });
+            });
+            minichart.on('mouseout', function () {
+                minichart.setOptions({
+                    width: icon_size,
+                    colors: ["rgba(255, 148, 42, 0.5)", "rgba(62, 164, 16, 0.5)", "rgba(255, 0, 0, 0.5)"],
+                    pane: 'overlayPane'
+                });
+            });
         })
     })
 }

@@ -31,6 +31,8 @@ class Command(BaseCommand):
             # Extract raw results
             raw_results = results.raw
 
+            print(raw_results)
+
             # Check if the series field exists in the raw results
             if 'series' in raw_results:
                 for series in raw_results['series']:

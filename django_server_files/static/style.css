@@ -9,7 +9,7 @@ html, body, #map {
     border-radius: 10px;
     width: 180px;
     height: 265px;
-    background: rgba(240, 240, 240, 0.4);
+    background: rgba(240, 240, 240, 0.6);
 }
 
 .legend i {
