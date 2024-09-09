@@ -26,6 +26,24 @@ html, body, #map {
     text-align: left;
 }
 
+.history_button {
+    border: 2px solid black;
+    border-radius: 10px;
+    width: 180px;
+    height: 50px;
+    background: rgba(240, 240, 240, 0.6);
+}
+
+.history_button:hover {
+    border: 2px solid white;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+}
+
+.history_range {
+    width: 180px;
+}
+
 #map .runner_icon {
     text-align: center;
     padding: 4px;

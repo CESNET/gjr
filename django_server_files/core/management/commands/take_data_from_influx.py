@@ -25,13 +25,12 @@ class Command(BaseCommand):
 
             # samotné číslo by bylo lepší získat už na úrovni databáze, potom budu ještě potřebovat ty destinations
             results = client.query(
-                'SELECT last("count") FROM "queue_by_destination" WHERE ("destination_id" =~ /^pulsar_.*/) GROUP BY "destination_id", "state"'
+                # 'SELECT last("count") FROM "queue_by_destination" WHERE ("destination_id" =~ /^pulsar_.*/) GROUP BY "destination_id", "state"'
+                'SELECT last("count") FROM "queue_by_destination" GROUP BY "destination_id", "state"'
             )
 
             # Extract raw results
             raw_results = results.raw
-
-            print(raw_results)
 
             # Check if the series field exists in the raw results
             if 'series' in raw_results:

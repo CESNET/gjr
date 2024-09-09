@@ -1,11 +1,6 @@
 from django.db import models
 
 # Create your models here.
-# class Pulsar(models.Model):
-#     name = models.CharField(max_length=10)
-#     latitude = models.FloatField()
-#     longitude = models.FloatField()
-#     job_num = models.IntegerField()
 
 class Pulsar(models.Model):
     name = models.CharField(max_length=20)
@@ -16,4 +11,13 @@ class Pulsar(models.Model):
     running_jobs = models.IntegerField()
     failed_jobs = models.IntegerField()
 
-# add models for galaxy servers and runners
+# add models for galaxy servers?
+
+class History(models.Model):
+    pulsar = models.ForeignKey(Pulsar, on_delete=models.CASCADE)
+    name = models.CharField(max_length=20)
+    galaxy = models.CharField(max_length=20)
+    queued_jobs = models.IntegerField()
+    running_jobs = models.IntegerField()
+    failed_jobs = models.IntegerField()
+    timestamp = models.DateTimeField(auto_now_add=True)
