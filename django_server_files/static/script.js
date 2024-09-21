@@ -142,7 +142,9 @@ function addLegendPie(map) {
             labels.push(
                 '<i class="square" style="background:' + getColor(checkins[i]) + '"></i><p>' + checkins[i] + '</p>')
         }
-        labels.push(`<form method="post">
+        labels.push(`<form action="/play-history/" method="post">
+                        {% csrf_token %}
+                        {{ PlayHistory }}
                         <button class="history_button" type="submit" name="play_history">Play history</button>
                         <input class="history_range" type="range" min="0" max="100" value="100"></input>
                      </form>`);

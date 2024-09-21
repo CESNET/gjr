@@ -4,6 +4,7 @@ import os
 from django.core.management.base import BaseCommand
 from core.models import Pulsar
 from influxdb import InfluxDBClient
+from django.utils import timezone
 
 class Command(BaseCommand):
     help = "Pulsar job computing from InfluxDB"
@@ -23,14 +24,16 @@ class Command(BaseCommand):
         while True:
             print("Pulsar job number updating...")
 
-            # samotné číslo by bylo lepší získat už na úrovni databáze, potom budu ještě potřebovat ty destinations
             results = client.query(
-                # 'SELECT last("count") FROM "queue_by_destination" WHERE ("destination_id" =~ /^pulsar_.*/) GROUP BY "destination_id", "state"'
-                'SELECT last("count") FROM "queue_by_destination" GROUP BY "destination_id", "state"'
+                # 'SELECT last("count") FROM "queue_by_destination" WHERE ("destination_id" =~ /^pulsar_.*/) GROUP BY "destination_id", "state"' # just puslars
+                'SELECT last("count") FROM "queue_by_destination" GROUP BY "destination_id", "state"' # all machines
             )
 
             # Extract raw results
             raw_results = results.raw
+
+            # PBS control
+            pbs_first_time = True;
 
             # Check if the series field exists in the raw results
             if 'series' in raw_results:
@@ -42,7 +45,14 @@ class Command(BaseCommand):
                     # Output or process each row
                     print(f"Destination ID: {destination_id}, State: {state}, Count: {last_count}")
 
-                    update_pulsar_job_num(self, destination_id, state, last_count)
+                    if "pulsar" in destination_id:
+                        update_pulsar_job_num(self, destination_id, state, last_count)
+                    else:
+                        if pbs_first_time:
+                            update_pulsar_job_num(self, "eu_pbs", state, last_count)
+                            pbs_first_time = False
+                        else:
+                            add_to_pulsar_job_num(self, "eu_pbs", state, last_count)
             else:
                 print("No data found in the query results.")
 
@@ -58,6 +68,20 @@ def update_pulsar_job_num(self, pulsar_name, state, job_num):
         if state == 'failed':
             pulsar.failed_jobs = job_num
         pulsar.save()
-        print(f"Updated {pulsar.name}: new job_num is {job_num}")
+        print(f"Updated {pulsar.name}: new number of {state} is {job_num}")
+    except Pulsar.DoesNotExist:
+        print(f"Pulsar with name {pulsar_name} does not exist.")
+
+def add_to_pulsar_job_num(self, pulsar_name, state, job_num):
+    try:
+        pulsar = Pulsar.objects.get(name=pulsar_name)
+        if state == 'queued':
+            pulsar.queued_jobs += job_num
+        if state == 'running':
+            pulsar.running_jobs += job_num
+        if state == 'failed':
+            pulsar.failed_jobs += job_num
+        pulsar.save()
+        print(f"Updated pbs {pulsar.name}")
     except Pulsar.DoesNotExist:
         print(f"Pulsar with name {pulsar_name} does not exist.")

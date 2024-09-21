@@ -14,10 +14,9 @@ class Pulsar(models.Model):
 # add models for galaxy servers?
 
 class History(models.Model):
-    pulsar = models.ForeignKey(Pulsar, on_delete=models.CASCADE)
     name = models.CharField(max_length=20)
     galaxy = models.CharField(max_length=20)
     queued_jobs = models.IntegerField()
     running_jobs = models.IntegerField()
     failed_jobs = models.IntegerField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField()

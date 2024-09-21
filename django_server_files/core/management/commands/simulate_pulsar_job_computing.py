@@ -15,7 +15,7 @@ class Command(BaseCommand):
         self.inicialize_simulation()
 
         while True:
-            print("Pulsar job number updating...")
+            self.stdout.write(self.style.SUCCESS('Successfully simulated pulsar computation.'))
 
             for pulsar in Pulsar.objects.all():
                 pulsar.queued_jobs = self.update_pulsar(pulsar.queued_jobs, queued_num_var)
