@@ -42,7 +42,7 @@ class Command(BaseCommand):
             else:
                 print("No data found in the query results.")
 
-            time.sleep(10)
+            time.sleep(120)
 
 def add_pulsar_to_history_or_update(self, pulsar_name, state, job_num, current_time):
     local_queued_jobs = 0

@@ -1,18 +1,9 @@
+// global definition of marker updater which is shared
+var marker_updater;
+
 function createMap(center, zoom) {
     let map = L.map('map').setView(center, zoom);
-
-    // L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
-
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-    // L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}').addTo(map);
-
-    // L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
-
-    // L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
-
-    // L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
-
     return map
 }
 
@@ -24,85 +15,6 @@ function getMarkerColor(pulsar_job_sum) {
         return 'runner_icon_orange';
     }
     return 'runner_icon_red';
-}
-
-function updateMarkersPie(markerFeatureGroup) {
-    // Send a request to the server to get the new job numbers
-    fetch('/pulsar-positions/').then(response => response.json()).then(data => {
-        markerFeatureGroup.clearLayers();
-        data.pulsars.forEach((pulsar, idx) => {
-            var pulsar_job_sum = pulsar.queued_jobs + pulsar.running_jobs + pulsar.failed_jobs
-            var maximal_icon_size = 200;
-            var minimal_icon_size = 35;
-            var icon_size = pulsar_job_sum + minimal_icon_size > maximal_icon_size ? maximal_icon_size : pulsar_job_sum + minimal_icon_size;
-            var minichart;
-
-            if (pulsar_job_sum > 0) {
-                minichart = L.minichart([pulsar.latitude, pulsar.longitude], {
-                    type: "pie",
-                    data: [pulsar.queued_jobs, pulsar.running_jobs, pulsar.failed_jobs],
-                    maxValues: "auto",
-                    colors: ["rgba(255, 148, 42, 0.5)", "rgba(62, 164, 16, 0.5)", "rgba(255, 0, 0, 0.5)"],
-                    width: icon_size,
-                    labels: "auto",
-                    transitionTime: 0
-                });
-            } else {
-                minichart = L.marker([pulsar.latitude, pulsar.longitude], {
-                    icon: L.divIcon({
-                        className: 'runner_icon runner_icon_empty',
-                        html: '<b>' + pulsar_job_sum + '</b>',
-                        iconSize: [icon_size, icon_size]
-                    })
-                });
-            }
-
-            minichart.addTo(markerFeatureGroup);
-            minichart.bindTooltip(L.tooltip([pulsar.latitude, pulsar.longitude], {
-                content: `runner name: <b>${pulsar.name}</b><br>queued jobs: <b>${pulsar.queued_jobs}</b><br>running jobs: <b>${pulsar.running_jobs}</b><br>failed jobs: <b>${pulsar.failed_jobs}</b>`,
-                offset: L.point((icon_size / 2), -(icon_size / 2)),
-                direction: 'right'
-            }));
-            // event listeners
-            minichart.on('mouseover', function () {
-                minichart.setOptions({
-                    width: icon_size * 1.2,
-                    colors: ["rgba(255, 148, 42, 0.8)", "rgba(62, 164, 16, 0.8)", "rgba(255, 0, 0, 0.8)"],
-                    pane: 'tooltipPane'
-
-                });
-            });
-            minichart.on('mouseout', function () {
-                minichart.setOptions({
-                    width: icon_size,
-                    colors: ["rgba(255, 148, 42, 0.5)", "rgba(62, 164, 16, 0.5)", "rgba(255, 0, 0, 0.5)"],
-                    pane: 'overlayPane'
-                });
-            });
-        })
-    })
-}
-
-function updateMarkersCircles(markerFeatureGroup) {
-    // Send a request to the server to get the new job numbers
-    fetch('/pulsar-positions/').then(response => response.json()).then(data => {
-        markerFeatureGroup.clearLayers();
-        data.pulsars.forEach((pulsar, idx) => {
-            var pulsar_job_sum = pulsar.queued_jobs + pulsar.running_jobs + pulsar.failed_jobs
-            var icon = getMarkerColor(pulsar_job_sum);
-            var maximal_icon_size = 150;
-            var icon_size = pulsar_job_sum / 2 + 20 > maximal_icon_size ? maximal_icon_size : pulsar_job_sum / 2 + 20;
-
-            L.marker([pulsar.latitude, pulsar.longitude], {
-                icon: L.divIcon({
-                    className: 'runner_icon ' + icon,
-                    html: '<b>' + pulsar_job_sum + '</b>',
-                    iconSize: [icon_size, icon_size]
-                })
-            }).addTo(markerFeatureGroup)
-              .bindTooltip(`runner name: <b>${pulsar.name}</b><br>queued jobs: <b>${pulsar.queued_jobs}</b><br>running jobs: <b>${pulsar.running_jobs}</b><br>failed jobs: <b>${pulsar.failed_jobs}</b>`);
-        })
-    })
 }
 
 function  getColor(s) {
@@ -131,6 +43,132 @@ function addLegendCircle(map) {
     legend.addTo(map);
 }
 
+function renderPulsar(pulsar, markerFeatureGroup) {
+    var pulsar_job_sum = pulsar.queued_jobs + pulsar.running_jobs + pulsar.failed_jobs
+    var maximal_icon_size = 200;
+    var minimal_icon_size = 35;
+    var icon_size = pulsar_job_sum + minimal_icon_size > maximal_icon_size ? maximal_icon_size : pulsar_job_sum + minimal_icon_size;
+    var minichart;
+    if (pulsar_job_sum > 0) {
+        minichart = L.minichart([pulsar.latitude, pulsar.longitude], {
+            type: "pie",
+            data: [pulsar.queued_jobs, pulsar.running_jobs, pulsar.failed_jobs],
+            maxValues: "auto",
+            colors: ["rgba(255, 148, 42, 0.5)", "rgba(62, 164, 16, 0.5)", "rgba(255, 0, 0, 0.5)"],
+            width: icon_size,
+            labels: "auto",
+            transitionTime: 0
+        });
+    } else {
+        minichart = L.marker([pulsar.latitude, pulsar.longitude], {
+            icon: L.divIcon({
+                className: 'runner_icon runner_icon_empty',
+                html: '<b>' + pulsar_job_sum + '</b>',
+                iconSize: [icon_size, icon_size]
+            })
+        });
+    }
+    minichart.addTo(markerFeatureGroup);
+    minichart.bindTooltip(L.tooltip([pulsar.latitude, pulsar.longitude], {
+        content: `runner name: <b>${pulsar.name}</b><br>queued jobs: <b>${pulsar.queued_jobs}</b><br>running jobs: <b>${pulsar.running_jobs}</b><br>failed jobs: <b>${pulsar.failed_jobs}</b>`,
+        offset: L.point((icon_size / 2), -(icon_size / 2)),
+        direction: 'right'
+    }));
+    // event listeners
+    minichart.on('mouseover', function () {
+        minichart.setOptions({
+            width: icon_size * 1.2,
+            colors: ["rgba(255, 148, 42, 0.8)", "rgba(62, 164, 16, 0.8)", "rgba(255, 0, 0, 0.8)"],
+            pane: 'tooltipPane'
+        });
+    });
+    minichart.on('mouseout', function () {
+        minichart.setOptions({
+            width: icon_size,
+            colors: ["rgba(255, 148, 42, 0.5)", "rgba(62, 164, 16, 0.5)", "rgba(255, 0, 0, 0.5)"],
+            pane: 'overlayPane'
+        });
+    });
+}
+
+function updateMarkersPie_realTime(markerFeatureGroup) {
+    // Send a request to the server to get the new job numbers
+    fetch('/pulsar-positions/').then(response => response.json()).then(data => {
+        markerFeatureGroup.clearLayers();
+        data.pulsars.forEach(pulsar => {
+            renderPulsar(pulsar, markerFeatureGroup);
+        });
+    });
+}
+
+// TODO !!!!!!!!!! SOME PROBLEM WITH marker updater - when is Play history runned second time, marker updater is not cleared and there run two instances -> maybe make object in index script with marker updater as a attribute and then change it serially
+// TODO move this right into python views so I do not need to get whole history, just what I need right in SQL (get just history I need from history moment)
+function playHistory_oneStep(data, keys, history_moment, history_size, range_size, markerClusterGroup) {
+    if (history_moment.index >= history_size) {
+        document.getElementById("history_range").value = 0;
+        document.getElementById("time_label").innerHTML = `Live`;
+        history_moment.index = 0;
+        document.getElementById("live_button").style.display = "none";
+        clearInterval(marker_updater);
+        marker_updater = setInterval(() => updateMarkersPie_realTime(markerClusterGroup), 3500);
+        return;
+    }
+    var timestamp = keys[history_moment.index];
+    var arrayOfPulsars = data[timestamp];
+    // change range history and label due to rendered data entries
+    document.getElementById("time_label").innerHTML = `${timestamp}`;
+    document.getElementById("history_range").value = Math.round(history_moment.index / (history_size / range_size));
+    markerClusterGroup.clearLayers();
+    arrayOfPulsars.forEach(pulsar => {
+        renderPulsar(pulsar, markerClusterGroup);
+    });
+    history_moment.index++;
+}
+
+function updateMarkersPie_playHistory(markerClusterGroup) {
+    // stop real time view
+    clearInterval(marker_updater);
+    document.getElementById("live_button").style.display = "inline-block";
+    var moment = document.getElementById("history_range").value;
+    var url = `/play-history/${moment}/`;
+    fetch(url, { method: "GET" }).then(response => response.json()).then(data => {
+        // calculate moment to data entries
+        var history_size = Object.keys(data).length;
+        var range_size = document.getElementById("history_range").getAttribute("max");
+        var history_moment_index = Math.round((history_size / range_size) * moment);
+        var history_moment = { index: history_moment_index };
+
+        // TODO also print current timestamp to the left upper corner -> I need to put there, style it in css, and position it inc css in base.html some text window and change it every time it changes, but I do not want to have there timestamp in live view -> in live view tere will be just LIVE, or something like that in TV news
+
+        // TODO: unreliable - need to make it different (dictionary does not have order you can rely on)
+        const keys = Object.keys(data);
+
+        // start rendering markers fast from moment
+        marker_updater = setInterval(() => playHistory_oneStep(data, keys, history_moment, history_size, range_size, markerClusterGroup), 500);
+    });
+}
+
+function showHistoryMoment(markerClusterGroup) {
+    // stop real time view
+    clearInterval(marker_updater);
+    var moment = document.getElementById("history_range").value;
+    // calculate moment to data entries
+    var history_size = Object.keys(data).length;
+    var range_size = document.getElementById("history_range").getAttribute("max");
+    var history_moment_index = Math.round((history_size / range_size) * moment);
+    var history_moment = { index: history_moment_index };
+    var url = `/show-history-moment/${moment}/`
+    fetch(url, { method: "GET" }).then(response => response.json()).then(data => {
+        var timestamp = keys[0];
+        var pulsar = data[timestamp];
+        // change range history and label due to rendered data entries
+        document.getElementById("time_label").innerHTML = `${timestamp}`;
+        document.getElementById("history_range").value = Math.round(history_moment.index / (history_size / range_size));
+        markerClusterGroup.clearLayers();
+        renderPulsar(pulsar, markerClusterGroup);
+    });
+}
+
 function addLegendPie(map) {
     var legend = L.control({position: 'topright'});
     legend.onAdd = function (map) {
@@ -142,12 +180,12 @@ function addLegendPie(map) {
             labels.push(
                 '<i class="square" style="background:' + getColor(checkins[i]) + '"></i><p>' + checkins[i] + '</p>')
         }
-        labels.push(`<form action="/play-history/" method="post">
-                        {% csrf_token %}
-                        {{ PlayHistory }}
-                        <button class="history_button" type="submit" name="play_history">Play history</button>
-                        <input class="history_range" type="range" min="0" max="100" value="100"></input>
-                     </form>`);
+        labels.push(
+            `<button type="button" id="history_button" class="history_button" name="play_history">Play history</button>
+            <input type="range" id="history_range" class="history_range" name="history_range" min="0" max="100" value="0"></input>
+            <label id="time_label">Live</label>
+            <button type="button" id="live_button" class="live_button" name="live_button">Return to live veiw</button>`
+        );
         legendDiv.innerHTML = title + '<br>' + labels.join('<br>');
         return legendDiv;
     }

@@ -44,6 +44,32 @@ html, body, #map {
     width: 180px;
 }
 
+.live_button {
+    border: 2px solid black;
+    border-radius: 10px;
+    width: 180px;
+    height: 50px;
+    background: rgba(240, 240, 240, 0.6);
+    display: none;
+    color: red;
+}
+
+.live_button:hover {
+    border: 2px solid white;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+}
+
+#time_label {
+    width: 180px;
+    height: 80px;
+    color: red;
+    font-size: 20px;
+    display: block;
+    text-align: center;
+    font-weight: bold;
+}
+
 #map .runner_icon {
     text-align: center;
     padding: 4px;

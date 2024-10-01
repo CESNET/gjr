@@ -17,16 +17,27 @@
         add_galaxy_eu_node_and_its_polylines(map, galaxy_icon);
         let pulsars = JSON.parse(document.getElementById('pulsar-json').textContent)
 
-        // let markerFeatureGroup = L.featureGroup().addTo(map);
         let markerClusterGroup = L.markerClusterGroup().addTo(map);
 
         for (let pulsar of pulsars) {
-            // L.marker([pulsar.latitude, pulsar.longitude]).addTo(markerFeatureGroup);
             markerClusterGroup.addLayer(L.marker([pulsar.latitude, pulsar.longitude]));
         }
 
-        // setInterval(() => updateMarkers(markerFeatureGroup), 2000)
-        setInterval(() => updateMarkersPie(markerClusterGroup), 3500)
+        marker_updater = setInterval(() => updateMarkersPie_realTime(markerClusterGroup), 3500);
+
+        document.getElementById('history_button').onclick = function() {
+            updateMarkersPie_playHistory(markerClusterGroup);
+        };
+
+        document.getElementById('live_button').onclick = function() {
+            document.getElementById("live_button").style.display = "none";
+            // document.getElementById("history_range").value = 0;
+            document.getElementById("time_label").innerHTML = `Live`;
+            clearInterval(marker_updater);
+            marker_updater = setInterval(() => updateMarkersPie_realTime(markerClusterGroup), 3500);
+        };
+
+        // document.getElementById('history_range').onchange = showHistoryMoment(markerClusterGroup);
     });
 </script>
 
