@@ -7,15 +7,16 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # add_random_pulsars()
-        add_galaxy(galaxy_eu_pulsars, 'usegalaxy.eu')
-        add_galaxy(galaxy_cz_pulsars, 'usegalaxy.cz')
-        add_galaxy(galaxy_uk_pulsars, 'usegalaxy.uk')
-        add_galaxy(galaxy_se_pulsars, 'usegalaxy.se')
-        add_galaxy(galaxy_lv_pulsars, 'usegalaxy.lv')
+        add_galaxy(galaxy_eu_pulsars_real, 'usegalaxy.eu')
+        # add_galaxy(galaxy_eu_pulsars, 'usegalaxy.eu')
+        # add_galaxy(galaxy_cz_pulsars, 'usegalaxy.cz')
+        # add_galaxy(galaxy_uk_pulsars, 'usegalaxy.uk')
+        # add_galaxy(galaxy_se_pulsars, 'usegalaxy.se')
+        # add_galaxy(galaxy_lv_pulsars, 'usegalaxy.lv')
         # add_galaxy(galaxy_au_pulsars, 'usegalaxy.au')
         # add_galaxy(galaxy_org_pulsars, 'usegalaxy.org')
-        add_galaxy(galaxy_fr_pulsars, 'usegalaxy.fr')
-        add_galaxy(galaxy_sp_pulsars, 'usegalaxy.sp')
+        # add_galaxy(galaxy_fr_pulsars, 'usegalaxy.fr')
+        # add_galaxy(galaxy_sp_pulsars, 'usegalaxy.sp')
 
 def add_random_pulsars():
     NUM_PULSARS_TO_GENERATE = 5
@@ -55,6 +56,41 @@ def add_galaxy(pulsars, galaxy):
         { name: 'usegalaxy.fr', coordinates: [48.6107856, 1.6836897], color: get_rand_color() },
         { name: 'usegalaxy.lv', coordinates: [56.9479739, 24.0932114], color: get_rand_color() }
 """
+
+galaxy_eu_pulsars_real = [
+    # eu pbs
+    ("eu_pbs", 48.9731131, 9.3016003), # posunout o kousek doprava nahoru nad pulsar +1 +1
+    # Freiburg - Mira's pulsar
+    ("pulsar_mira_tpv", 48.1731131, 8.9016003),
+    # Freiburg - Snajay's pulsar
+    ("pulsar_sanjay_tpv", 48.1731131, 9),
+    # Rennes - GenOuest bioinformatics
+    ("pulsar_fr01_tpv", 49.2204433, 3.9920847),
+    # Bari - RECAS
+    ("pulsar_it_tpv", 41.9028, 12.4964),
+    # Bari - RECAS 2
+    ("pulsar_it02_tpv", 42, 12.4964),
+    # Bari - INFN
+    ("pulsar_it03_tpv", 41.1198900, 16.8570750),
+    # Brussel - VIB
+    ("pulsar_be_tpv", 50.8476, 4.3572),
+    # Prague - MetaCentrum
+    ("pulsar_cz01_tpv", 50.0755, 14.4378),
+    ("pulsar_cz02_tpv", 50.1755, 14.5378),
+    # pulsar_egi01_tpv
+    # Bratislava - IISAS
+    ("pulsar_sk01_tpv", 48.148598, 17.107748),
+    # Barcelona - BSC-CNS
+    ("pulsar_bsc01_tpv", 40.416775, -3.703790),
+    # Ankara - TUBITAK ULAKBIM
+    ("pulsar_tubitak01_tpv", 39.2233947, 28.7209361),
+    # Krakow - Cyfronet
+    ("pulsar_cyf01_tpv", 52.237049, 21.017532),
+    # Herakilon-Crete - HCMR
+    ("pulsar_hcmr01_tpv", 35.3369294, 25.1281525),
+    # Greek FAIR-Ease
+    ("pulsar_greek_tpv", 38.0217778, 23.7427561)
+]
 
 galaxy_cz_pulsars = [
     ("cz_pbs", 50.2117769, 15.3615611), # posunout o kousek doprava nahoru nad pulsar +1 +1
