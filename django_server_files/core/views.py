@@ -123,7 +123,8 @@ def play_history(request, history_range):
     # Query all History objects and order them by timestamp
     # history_objects = History.objects.all().order_by('timestamp')
     # ordering is maybe useless because theay are already ordered by timestamp
-    history_objects = History.objects.all()
+
+    history_objects = reversed(History.objects.all()[:1000])
 
     # Initialize a dictionary to group by timestamp
     grouped_data = defaultdict(list)
@@ -142,7 +143,7 @@ def play_history(request, history_range):
                 'running_jobs': history.running_jobs,
                 'failed_jobs': history.failed_jobs,
             }
-            timestamp_data = grouped_data[str(history.timestamp.replace(microsecond=0, second=0, minute=0, hour=0))]
+            timestamp_data = grouped_data[str(history.timestamp.replace(microsecond=0, second=0))]
             # TODO: not great -> it also should be done in SQL already so I do not have more same pulsars in one category due to different time frames
 
             # if not any(e['name'] == entry['name'] and e['galaxy'] ==  entry['galaxy'] for e in timestamp_data):
@@ -150,13 +151,14 @@ def play_history(request, history_range):
 
             if not any(e['name'] == entry['name'] and e['galaxy'] ==  entry['galaxy'] for e in timestamp_data):
                  timestamp_data.append(entry)
+            """
             else:
                 for e in timestamp_data:
                     if e['name'] == entry['name'] and e['galaxy'] ==  entry['galaxy']:
                         e['queued_jobs'] = (e['queued_jobs'] + entry['queued_jobs']) / 2
                         e['running_jobs'] = (e['running_jobs'] + entry['running_jobs']) / 2
                         e['failed_jobs'] = (e['failed_jobs'] + entry['failed_jobs']) / 2
-
+            """
         except Pulsar.DoesNotExist:
             # TODO handle error
             # print("Pulsar from history does not exist!", history.name)
