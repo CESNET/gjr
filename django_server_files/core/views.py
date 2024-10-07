@@ -124,7 +124,7 @@ def play_history(request, history_range):
     # history_objects = History.objects.all().order_by('timestamp')
     # ordering is maybe useless because theay are already ordered by timestamp
 
-    history_objects = reversed(History.objects.all()[:1000])
+    history_objects = History.objects.all()[:1000]
 
     # Initialize a dictionary to group by timestamp
     grouped_data = defaultdict(list)
