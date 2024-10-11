@@ -32,6 +32,7 @@ html, body, #map {
     width: 180px;
     height: 50px;
     background: rgba(240, 240, 240, 0.6);
+    margin-bottom: 5px;
 }
 
 .history_button:hover {
@@ -60,9 +61,24 @@ html, body, #map {
     color: white;
 }
 
+#history_window {
+    border: 2px solid black;
+    border-radius: 10px;
+    width: 180px;
+    height: 30px;
+    background: rgba(240, 240, 240, 0.6);
+    margin-bottom: 5px;
+}
+
+#history_window:hover {
+    border: 2px solid white;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+}
+
 #time_label {
     width: 180px;
-    height: 80px;
+    height: 75px;
     color: red;
     font-size: 20px;
     display: block;

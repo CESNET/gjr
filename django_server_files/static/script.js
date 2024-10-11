@@ -118,7 +118,7 @@ function playHistory_oneStep(data, keys, history_moment, history_size, range_siz
     // change range history and label due to rendered data entries
     document.getElementById("time_label").innerHTML = `${timestamp}`;
     document.getElementById("history_range").value = Math.round(history_moment.index / (history_size / range_size));
-    markerClusterGroup.clearLayers();
+    markerClusterGroup.clearLayers(); // TODO: CLEAR LAYERS WITHOUT ZEROES
     arrayOfPulsars.forEach(pulsar => {
         renderPulsar(pulsar, markerClusterGroup);
     });
@@ -130,7 +130,8 @@ function updateMarkersPie_playHistory(markerClusterGroup) {
     clearInterval(marker_updater);
     document.getElementById("live_button").style.display = "inline-block";
     var moment = document.getElementById("history_range").value;
-    var url = `/play-history/${moment}/`;
+    var history_window = document.getElementById("history_window").value;
+    var url = `/play-history/${moment}/${history_window}/`;
     fetch(url, { method: "GET" }).then(response => response.json()).then(data => {
         // calculate moment to data entries
         var history_size = Object.keys(data).length;
@@ -181,7 +182,13 @@ function addLegendPie(map) {
                 '<i class="square" style="background:' + getColor(checkins[i]) + '"></i><p>' + checkins[i] + '</p>')
         }
         labels.push(
-            `<button type="button" id="history_button" class="history_button" name="play_history">Play history</button>
+            `<select name="history_window" id="history_window">
+                <option value="hour">last hour</option>
+                <option value="day">last day</option>
+                <option value="month">last month</option>
+                <option value="year">last year</option>
+            </select>
+            <button type="button" id="history_button" class="history_button" name="play_history">Play history</button>
             <input type="range" id="history_range" class="history_range" name="history_range" min="0" max="100" value="0"></input>
             <label id="time_label">Live</label>
             <button type="button" id="live_button" class="live_button" name="live_button">Return to live veiw</button>`
@@ -207,14 +214,14 @@ function add_galaxy_eu_node_and_its_polylines(map, galaxy_icon_path) {
     // Galaxy servers points
     const galaxies = [
         { name: 'usegalaxy.eu', coordinates: [48.9731131, 9.3016003], color: get_rand_color() },
-        { name: 'usegalaxy.org', coordinates: [43.000000, -75.000000], color: get_rand_color() },
-        { name: 'usegalaxy.au', coordinates: [-33.865143, 151.209900], color: get_rand_color() },
-        { name: 'usegalaxy.cz', coordinates: [50.2117769, 15.3615611], color: get_rand_color() },
-        { name: 'usegalaxy.uk', coordinates: [51.5188083, 0.1403647], color: get_rand_color() },
-        { name: 'usegalaxy.se', coordinates: [59.8583539, 17.6291306], color: get_rand_color() },
-        { name: 'usegalaxy.sp', coordinates: [40.616775, -3.703790], color: get_rand_color() },
-        { name: 'usegalaxy.fr', coordinates: [48.6107856, 1.6836897], color: get_rand_color() },
-        { name: 'usegalaxy.lv', coordinates: [56.9479739, 24.0932114], color: get_rand_color() }
+        // { name: 'usegalaxy.org', coordinates: [43.000000, -75.000000], color: get_rand_color() },
+        // { name: 'usegalaxy.au', coordinates: [-33.865143, 151.209900], color: get_rand_color() },
+        // { name: 'usegalaxy.cz', coordinates: [50.2117769, 15.3615611], color: get_rand_color() },
+        // { name: 'usegalaxy.uk', coordinates: [51.5188083, 0.1403647], color: get_rand_color() },
+        // { name: 'usegalaxy.se', coordinates: [59.8583539, 17.6291306], color: get_rand_color() },
+        // { name: 'usegalaxy.sp', coordinates: [40.616775, -3.703790], color: get_rand_color() },
+        // { name: 'usegalaxy.fr', coordinates: [48.6107856, 1.6836897], color: get_rand_color() },
+        // { name: 'usegalaxy.lv', coordinates: [56.9479739, 24.0932114], color: get_rand_color() }
     ];
 
     galaxies.forEach(galaxy => {
