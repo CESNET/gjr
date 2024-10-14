@@ -3,7 +3,7 @@ from django.shortcuts import render
 from core.models import Pulsar, History
 from collections import defaultdict
 from django.http import JsonResponse
-from django.db.models.functions import Trunc, RowNumber
+from django.db.models.functions import Trunc, RowNumber, TruncMinute
 from django.db.models import OuterRef, Subquery, Avg, Min, Count, Q, F, Window, ExpressionWrapper, IntegerField, FloatField
 from django.db.models.expressions import RawSQL
 from django.utils import timezone
@@ -24,13 +24,13 @@ def pulsar_positions(request):
 def play_history(request, history_range, history_window):
     now = timezone.now()
     if history_window == "hour":
-        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(hours=1)))[::5]
+        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(hours=1)))
     if history_window == "day":
-        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(days=1)))[::60]
+        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(days=1)))
     if history_window == "month":
-        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(weeks=4)))[::24*60]
+        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(weeks=4)), timestamp__minute=0)
     if history_window == "year":
-        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(weeks=48)))[::6*24*60]
+        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(weeks=48)))
 
     # Initialize a dictionary to group by timestamp
     grouped_data = defaultdict(list)
@@ -83,6 +83,7 @@ def show_history_moment(request, history_range):
 
             if not any(e['name'] == entry['name'] and e['galaxy'] == entry['galaxy'] for e in timestamp_data):
                 timestamp_data.append(entry)
+
         except Pulsar.DoesNotExist:
             # TODO handle error
             # print("Pulsar from history does not exist!", history.name)
