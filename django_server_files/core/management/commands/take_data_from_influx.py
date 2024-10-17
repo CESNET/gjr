@@ -15,14 +15,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         client = InfluxDBClient(host="influxdb.galaxyproject.eu", port=8086, username="esg", password=self.influxdb_password, database="galaxy", ssl=True, verify_ssl=True)
 
-        for pulsar in Pulsar.objects.all():
+        while True:
+            print("Pulsar job number updating...")
+
+            for pulsar in Pulsar.objects.all():
                 pulsar.queued_jobs = 0;
                 pulsar.running_jobs = 0;
                 pulsar.failed_jobs = 0;
                 pulsar.save()
-
-        while True:
-            print("Pulsar job number updating...")
 
             results = client.query(
                 # 'SELECT last("count") FROM "queue_by_destination" WHERE ("destination_id" =~ /^pulsar_.*/) GROUP BY "destination_id", "state"' # just puslars

@@ -22,15 +22,20 @@ def pulsar_positions(request):
     )
 
 def play_history(request, history_range, history_window):
+    # TODO use history range and handle that it is in bounds
+
     now = timezone.now()
     if history_window == "hour":
         history_objects = History.objects.filter(timestamp__gte=(now - timedelta(hours=1)))
-    if history_window == "day":
+    elif history_window == "day":
         history_objects = History.objects.filter(timestamp__gte=(now - timedelta(days=1)))
-    if history_window == "month":
+    elif history_window == "month":
         history_objects = History.objects.filter(timestamp__gte=(now - timedelta(weeks=4)), timestamp__minute=0)
-    if history_window == "year":
-        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(weeks=48)))
+    elif history_window == "year":
+        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(weeks=48)), timestamp__hour=0, timestamp__minute=0)
+    else:
+        print("bad history window request")
+        return JsonResponse({}, safe=False)
 
     # Initialize a dictionary to group by timestamp
     grouped_data = defaultdict(list)
