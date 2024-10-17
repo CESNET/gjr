@@ -220,14 +220,14 @@ function add_galaxy_eu_node_and_its_polylines(map, galaxy_icon_path) {
     // Galaxy servers points
     const galaxies = [
         { name: 'usegalaxy.eu', coordinates: [48.9731131, 9.3016003], color: get_rand_color() },
-        { name: 'usegalaxy.org', coordinates: [43.000000, -75.000000], color: get_rand_color() },
-        { name: 'usegalaxy.au', coordinates: [-33.865143, 151.209900], color: get_rand_color() },
-        { name: 'usegalaxy.cz', coordinates: [50.2117769, 15.3615611], color: get_rand_color() },
-        { name: 'usegalaxy.uk', coordinates: [51.5188083, 0.1403647], color: get_rand_color() },
-        { name: 'usegalaxy.se', coordinates: [59.8583539, 17.6291306], color: get_rand_color() },
-        { name: 'usegalaxy.sp', coordinates: [40.616775, -3.703790], color: get_rand_color() },
-        { name: 'usegalaxy.fr', coordinates: [48.6107856, 1.6836897], color: get_rand_color() },
-        { name: 'usegalaxy.lv', coordinates: [56.9479739, 24.0932114], color: get_rand_color() }
+        // { name: 'usegalaxy.org', coordinates: [43.000000, -75.000000], color: get_rand_color() },
+        // { name: 'usegalaxy.au', coordinates: [-33.865143, 151.209900], color: get_rand_color() },
+        // { name: 'usegalaxy.cz', coordinates: [50.2117769, 15.3615611], color: get_rand_color() },
+        // { name: 'usegalaxy.uk', coordinates: [51.5188083, 0.1403647], color: get_rand_color() },
+        // { name: 'usegalaxy.se', coordinates: [59.8583539, 17.6291306], color: get_rand_color() },
+        // { name: 'usegalaxy.sp', coordinates: [40.616775, -3.703790], color: get_rand_color() },
+        // { name: 'usegalaxy.fr', coordinates: [48.6107856, 1.6836897], color: get_rand_color() },
+        // { name: 'usegalaxy.lv', coordinates: [56.9479739, 24.0932114], color: get_rand_color() }
     ];
 
     galaxies.forEach(galaxy => {
