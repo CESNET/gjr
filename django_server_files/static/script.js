@@ -46,9 +46,9 @@ function addLegendCircle(map) {
 function renderPulsar(pulsar, markerFeatureGroup) {
 
     // TODO remove later
-    // if (pulsar.galaxy != "usegalaxy.eu") {
-    //     return;
-    // }
+    if (pulsar.galaxy != "usegalaxy.eu") {
+         return;
+    }
 
     var pulsar_job_sum = pulsar.queued_jobs + pulsar.running_jobs + pulsar.failed_jobs
     var maximal_icon_size = 200;

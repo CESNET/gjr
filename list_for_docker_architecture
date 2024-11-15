@@ -1,0 +1,12 @@
+- konfiguraky
+    - settings.py (dj_leaflet)
+    - casto upravuju static script.js
+- spustitelne commands
+    - create_pulsars.py (jen jednou na začátku)
+    - simulate_pulsars
+    - store_influx_history (dlouhodobě jako demon)
+    - take_data_from_influx (dlouhodobě jako démon)
+- logy
+    - zatím nic speciálního, jen stderr, ale chtěl bych přidat systém, co posílal Honza
+- ukládání dat
+    - zatím pouze sqlite (momentalně django_server_files/db.sqlite3)
