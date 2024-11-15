@@ -1,11 +1,13 @@
 - konfiguraky
     - settings.py (dj_leaflet)
     - casto upravuju static script.js
+    - .env
 - spustitelne commands
     - create_pulsars.py (jen jednou na začátku)
     - simulate_pulsars
-    - store_influx_history (dlouhodobě jako demon)
+    - store_influx_history (dlouhodobě jako demon) // TODO make with cron, pouštět opakovaně, ne ve smyčce
     - take_data_from_influx (dlouhodobě jako démon)
+    - migrate?
 - logy
     - zatím nic speciálního, jen stderr, ale chtěl bych přidat systém, co posílal Honza
 - ukládání dat

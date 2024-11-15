@@ -16,7 +16,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG') == 'True'
 
-ALLOWED_HOSTS = ['10.1.1.21', '147.251.255.151', 'cloud255-46.cerit-sc.cz', '0.0.0.0', '127.0.0.1']
+ALLOWED_HOSTS = ['10.1.1.21', '147.251.255.151', 'cloud255-46.cerit-sc.cz', '0.0.0.0', '127.0.0.1'] # TODO 0.0.0.0 for all?
 
 
 # Application definition

@@ -181,12 +181,13 @@ function addLegendPie(map) {
     legend.onAdd = function (map) {
         var legendDiv =  L.DomUtil.create('div', 'info legend'),
             checkins = ['running jobs', 'queued jobs', 'failed jobs'],
-            title = '<strong>Galaxy Visualization</strong>',
-            labels = ['<p>Hello to our galaxy visualization tool from CESNET!</p>'];
+            title = '<img style="padding-left: 20px" src="static/gjr_logo.png" width="230">',
+            labels = ['<strong style="color: red; padding-left: 20px">ver.: 0.01 UNDER DEVELOPMENT</strong><br>'];
         for (var i=0; i < checkins.length; i++) {
             labels.push(
                 '<i class="square" style="background:' + getColor(checkins[i]) + '"></i><p>' + checkins[i] + '</p>')
         }
+        labels.push(`<strong style="padding-left: 20px">from CESNET</strong><br>`);
         labels.push(
             `<select name="history_window" id="history_window">
                 <option value="hour">last hour</option>
