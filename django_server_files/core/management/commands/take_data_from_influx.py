@@ -5,6 +5,9 @@ from django.core.management.base import BaseCommand
 from core.models import Pulsar
 from influxdb import InfluxDBClient
 from django.utils import timezone
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Command(BaseCommand):
     help = "Pulsar job computing from InfluxDB"
@@ -17,6 +20,7 @@ class Command(BaseCommand):
 
         while True:
             print("Pulsar job number updating...")
+            logger.info("Pulsar job number updating...")
 
             for pulsar in Pulsar.objects.all():
                 pulsar.queued_jobs = 0;
@@ -44,6 +48,7 @@ class Command(BaseCommand):
 
                     # Output or process each row
                     print(f"Destination ID: {destination_id}, State: {state}, Count: {last_count}")
+                    logger.info(f"Destination ID: {destination_id}, State: {state}, Count: {last_count}")
 
                     if "pulsar" in destination_id:
                         update_pulsar_job_num(self, destination_id, state, last_count)
@@ -55,6 +60,7 @@ class Command(BaseCommand):
                             add_to_pulsar_job_num(self, "eu_pbs", state, last_count)
             else:
                 print("No data found in the query results.")
+                logger.warning("No data found in the query results.")
 
             time.sleep(10)
 
@@ -69,8 +75,10 @@ def update_pulsar_job_num(self, pulsar_name, state, job_num):
             pulsar.failed_jobs = job_num
         pulsar.save()
         print(f"Updated {pulsar.name}: new number of {state} is {job_num}")
+        logger.info(f"Updated {pulsar.name}: new number of {state} is {job_num}")
     except Pulsar.DoesNotExist:
         print(f"Pulsar with name {pulsar_name} does not exist.")
+        logger.warning(f"Pulsar with name {pulsar_name} does not exist.")
 
 def add_to_pulsar_job_num(self, pulsar_name, state, job_num):
     try:
@@ -83,5 +91,7 @@ def add_to_pulsar_job_num(self, pulsar_name, state, job_num):
             pulsar.failed_jobs += job_num
         pulsar.save()
         print(f"Updated pbs {pulsar.name}")
+        logger.info(f"Updated pbs {pulsar.name}")
     except Pulsar.DoesNotExist:
         print(f"Pulsar with name {pulsar_name} does not exist.")
+        logger.warning(f"Pulsar with name {pulsar_name} does not exist.")

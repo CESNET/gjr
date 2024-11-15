@@ -18,36 +18,32 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         client = InfluxDBClient(host="influxdb.galaxyproject.eu", port=8086, username="esg", password=self.influxdb_password, database="galaxy", ssl=True, verify_ssl=True) # TODO make one influx utils where will be function for connecting and queries and that will be used across different scripts, also other utils
 
-        while True:
-            print("Storing influx DB history...")
-            logger.info("Storing influx DB history...")
+        logger.info("Storing influx DB history...")
 
-            results = client.query(
-                'SELECT last("count") FROM "queue_by_destination" GROUP BY "destination_id", "state"'
-            )
+        results = client.query(
+            'SELECT last("count") FROM "queue_by_destination" GROUP BY "destination_id", "state"'
+        )
 
-            # Extract raw results
-            raw_results = results.raw
+        # Extract raw results
+        raw_results = results.raw
 
-            # Store time
-            current_time = timezone.now()
+        # Store time
+        current_time = timezone.now()
 
-            # Check if the series field exists in the raw results
-            if 'series' in raw_results:
-                for series in raw_results['series']:
-                    destination_id = series['tags']['destination_id']
-                    state = series['tags']['state']
-                    last_count = series['values'][0][1]  # the 'last' value is the second element in the values list
+        # Check if the series field exists in the raw results
+        if 'series' in raw_results:
+            for series in raw_results['series']:
+                destination_id = series['tags']['destination_id']
+                state = series['tags']['state']
+                last_count = series['values'][0][1]  # the 'last' value is the second element in the values list
 
-                    if "pulsar" in destination_id:
-                        add_pulsar_to_history_or_update(self, destination_id, state, last_count, current_time)
-                    else:
-                        add_pulsar_to_history_or_update(self, "eu_pbs", state, last_count, current_time)
-            else:
-                print("No data found in the query results.")
-                logger.warning("No data found in the query results.")
-
-            time.sleep(120)
+                if "pulsar" in destination_id:
+                    add_pulsar_to_history_or_update(self, destination_id, state, last_count, current_time)
+                else:
+                    add_pulsar_to_history_or_update(self, "eu_pbs", state, last_count, current_time)
+        else:
+            print("No data found in the query results.")
+            logger.warning("No data found in the query results.")
 
 def add_pulsar_to_history_or_update(self, pulsar_name, state, job_num, current_time):
     local_queued_jobs = 0

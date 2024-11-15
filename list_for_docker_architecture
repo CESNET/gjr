@@ -12,3 +12,8 @@
     - zatím nic speciálního, jen stderr, ale chtěl bych přidat systém, co posílal Honza
 - ukládání dat
     - zatím pouze sqlite (momentalně django_server_files/db.sqlite3)
+
+quests
+X v settings nastavit db.sqlite3 a debug.log, aby zapisovaly mimo gjr image (kam?) // není potřeba, bude namapováno zvenku na stroji
+- .env přesunout ven a zjistit jak s tím, jak to dát dovnitř, když potřebuju, nebo jen přes env variables jak doteď?
+- hodit to na dev server a rozjet

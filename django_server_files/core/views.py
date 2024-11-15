@@ -8,6 +8,9 @@ from django.db.models import OuterRef, Subquery, Avg, Min, Count, Q, F, Window, 
 from django.db.models.expressions import RawSQL
 from django.utils import timezone
 from datetime import timedelta
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 
@@ -35,6 +38,7 @@ def play_history(request, history_range, history_window):
         history_objects = History.objects.filter(timestamp__gte=(now - timedelta(weeks=48)), timestamp__hour=0, timestamp__minute=0)
     else:
         print("bad history window request")
+        logger.critical("bad history window request")
         return JsonResponse({}, safe=False)
 
     # Initialize a dictionary to group by timestamp
@@ -63,6 +67,7 @@ def play_history(request, history_range, history_window):
         except Pulsar.DoesNotExist:
             # TODO handle error
             error = "Pulsar from history does not exist!"
+            logger.warning(error)
 
     return JsonResponse(grouped_data, safe=False)
 
@@ -93,6 +98,7 @@ def show_history_moment(request, history_range):
             # TODO handle error
             # print("Pulsar from history does not exist!", history.name)
             error = "Pulsar from history does not exist!"
+            logger.warning(error)
 
     # Convert the defaultdict to a regular dictionary for JSON serialization
     data = {timestamp: entries for timestamp, entries in grouped_data.items()}
