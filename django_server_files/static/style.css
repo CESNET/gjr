@@ -8,7 +8,7 @@ html, body, #map {
     border: 2px solid black;
     border-radius: 10px;
     width: 270px;
-    height: 385px;
+    height: 380px;
     background: rgba(240, 240, 240, 0.6);
 }
 
