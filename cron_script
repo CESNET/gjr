@@ -1,6 +1,7 @@
-* * * * * ./influx_task.sh >> /data/gjt/cron.log
-* * * * * sleep 10; ./influx_task.sh >> /data/gjt/cron.log
-* * * * * sleep 20; ./influx_task.sh >> /data/gjt/cron.log
-* * * * * sleep 30; ./influx_task.sh >> /data/gjt/cron.log
-* * * * * sleep 40; ./influx_task.sh >> /data/gjt/cron.log
-* * * * * sleep 50; ./influx_task.sh >> /data/gjt/cron.log
+* * * * * echo hello >> /var/log/cron.log 2>&1
+* * * * * sleep 10; echo hello >> /var/log/cron.log 2>&1
+* * * * * sleep 20; echo hello >> /var/log/cron.log 2>&1
+* * * * * sleep 30; echo hello >> /var/log/cron.log 2>&1
+* * * * * sleep 40; echo hello >> /var/log/cron.log 2>&1
+* * * * * sleep 50; echo hello >> /var/log/cron.log 2>&1
+

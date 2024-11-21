@@ -23,7 +23,7 @@
             markerClusterGroup.addLayer(L.marker([pulsar.latitude, pulsar.longitude]));
         }
 
-        marker_updater = setInterval(() => updateMarkersPie_realTime(markerClusterGroup), 3500);
+        marker_updater = setInterval(() => updateMarkersPie_realTime(markerClusterGroup), 10000);
 
         document.getElementById('history_button').onclick = function() {
             updateMarkersPie_playHistory(markerClusterGroup);
@@ -34,7 +34,7 @@
             // document.getElementById("history_range").value = 0;
             document.getElementById("time_label").innerHTML = `Live`;
             clearInterval(marker_updater);
-            marker_updater = setInterval(() => updateMarkersPie_realTime(markerClusterGroup), 3500);
+            marker_updater = setInterval(() => updateMarkersPie_realTime(markerClusterGroup), 10000);
         };
 
         // document.getElementById('history_range').onchange = showHistoryMoment(markerClusterGroup);
