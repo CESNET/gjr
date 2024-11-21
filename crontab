@@ -1,0 +1,7 @@
+* * * * * root echo "Hello world" >> /var/log/cron.log 2>&1
+* * * * * root sleep 10; echo "Hello world" >> /var/log/cron.log 2>&1
+* * * * * root sleep 20; echo "Hello world" >> /var/log/cron.log 2>&1
+* * * * * root sleep 30; echo "Hello world" >> /var/log/cron.log 2>&1
+* * * * * root sleep 40; echo "Hello world" >> /var/log/cron.log 2>&1
+* * * * * root sleep 50; echo "Hello world" >> /var/log/cron.log 2>&1
+# Don't remove the empty line at the end of this file. It is required to run the cron job

@@ -1,29 +1,19 @@
-FROM python:3.11
+FROM ubuntu:latest
+MAINTAINER docker@ekito.fr
 
-WORKDIR /app
+# Add crontab file in the cron directory
+ADD crontab /etc/cron.d/hello-cron
 
-COPY requirements.txt .
+# Give execution rights on the cron job
+RUN chmod 0644 /etc/cron.d/hello-cron
 
-RUN pip install --no-cache-dir -r requirements.txt && apt-get update && apt-get -y install cron
-
-COPY . .
-
-USER root
-
-# COPY cron_script /etc/cron.d/cron_script
-# RUN chmod +x /etc/cron.d/cron_script
-
-ADD cron_script /etc/cronjob
-RUN crontab /etc/cronjob
-
-# RUN chmod +x ./influx_task.sh
-
+# Create the log file to be able to run tail
 RUN touch /var/log/cron.log
 
-# EXPOSE 8000
+#Install Cron
+RUN apt-get update
+RUN apt-get -y install cron
 
-# RUN chmod +x ./at_container_start.sh
 
-# CMD ./at_container_start.sh 
-
-CMD ["cron", "-f"]
+# Run the command on container startup
+CMD cron && tail -f /var/log/cron.log
