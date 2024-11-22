@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand
 from core.models import History
 from influxdb import InfluxDBClient
 from django.utils import timezone
-import loging
+import logging
 
 logger = logging.getLogger(__name__)
 
