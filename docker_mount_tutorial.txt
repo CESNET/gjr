@@ -1,0 +1,4 @@
+/data/gjr_data/db.sqlite3 -> /app/django_server_files/db.sqlite3
+~/debug.log -> /app/django_server_files/debug.log
+~/.env -> /app/django_server_files/.env
+~/settings.py -> /app/django_server_files/dj_leaflet/settings.py
