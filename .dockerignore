@@ -1,2 +1,2 @@
 django_server_files/.env
-django_server_files/db.sqlite3
+django_server_files/.db.sqlite3
