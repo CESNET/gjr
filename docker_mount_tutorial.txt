@@ -2,3 +2,4 @@
 ~/debug.log -> /app/django_server_files/debug.log
 ~/.env -> /app/django_server_files/.env
 ~/settings.py -> /app/django_server_files/dj_leaflet/settings.py
+~/cron.log -> /var/log/cron.log
