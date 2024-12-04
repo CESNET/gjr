@@ -28,14 +28,16 @@ def play_history(request, history_range, history_window):
     # TODO use history range and handle that it is in bounds
 
     now = timezone.now()
-    if history_window == "hour":
-        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(hours=1)))
+    if history_window == "minute":
+        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(minutes=10)))
+    elif history_window == "hour":
+        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(hours=1)), timestamp__second__gte=30)
     elif history_window == "day":
-        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(days=1)))
+        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(days=1)), timestamp__minute__gte=30)
     elif history_window == "month":
-        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(weeks=4)), timestamp__minute=0)
+        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(weeks=4)), timestamp__hour=0, timestamp__minute=0, timestamp__second__gte=30)
     elif history_window == "year":
-        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(weeks=48)), timestamp__hour=0, timestamp__minute=0)
+        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(weeks=48)), timestamp__hour=0, timestamp__minute=0, timestamp__second__gte=30)
     else:
         print("bad history window request")
         logger.critical("bad history window request")
@@ -58,7 +60,7 @@ def play_history(request, history_range, history_window):
                 'running_jobs': history.running_jobs,
                 'failed_jobs': history.failed_jobs,
             }
-            timestamp_data = grouped_data[str(history.timestamp.replace(microsecond=0, second=0))]
+            timestamp_data = grouped_data[str(history.timestamp.replace(microsecond=0))] # second=0
             # TODO: not great -> it also should be done in SQL already so I do not have more same pulsars in one category due to different time frames
 
             if not any(e['name'] == entry['name'] and e['galaxy'] ==  entry['galaxy'] for e in timestamp_data):
@@ -66,7 +68,7 @@ def play_history(request, history_range, history_window):
 
         except Pulsar.DoesNotExist:
             # TODO handle error
-            error = "Pulsar from history does not exist!"
+            error = "Pulsar from history: " + history.name + " does not exist!"
             logger.warning(error)
 
     return JsonResponse(grouped_data, safe=False)

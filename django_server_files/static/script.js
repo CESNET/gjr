@@ -18,9 +18,9 @@ function getMarkerColor(pulsar_job_sum) {
 }
 
 function  getColor(s) {
-    if ( s === '0-30 jobs' || s === 'running jobs')
+    if (s === '0-30 jobs' || s === 'running jobs')
         return 'green';
-    else if ( s === '30-100 jobs' || s === 'queued jobs')
+    else if (s === '30-100 jobs' || s === 'queued jobs')
         return 'orange';
     else
         return 'red';
@@ -81,20 +81,22 @@ function renderPulsar(pulsar, markerFeatureGroup) {
         direction: 'right'
     }));
     // event listeners
-    minichart.on('mouseover', function () {
-        minichart.setOptions({
-            width: icon_size * 1.2,
-            colors: ["rgba(255, 148, 42, 0.8)", "rgba(62, 164, 16, 0.8)", "rgba(255, 0, 0, 0.8)"],
-            pane: 'tooltipPane'
+    if (pulsar_job_sum > 0) {
+        minichart.on('mouseover', function () {
+            minichart.setOptions({
+                width: icon_size * 1.2,
+                colors: ["rgba(255, 148, 42, 0.8)", "rgba(62, 164, 16, 0.8)", "rgba(255, 0, 0, 0.8)"],
+                pane: 'tooltipPane'
+            });
         });
-    });
-    minichart.on('mouseout', function () {
-        minichart.setOptions({
-            width: icon_size,
-            colors: ["rgba(255, 148, 42, 0.5)", "rgba(62, 164, 16, 0.5)", "rgba(255, 0, 0, 0.5)"],
-            pane: 'overlayPane'
+        minichart.on('mouseout', function () {
+            minichart.setOptions({
+                width: icon_size,
+                colors: ["rgba(255, 148, 42, 0.5)", "rgba(62, 164, 16, 0.5)", "rgba(255, 0, 0, 0.5)"],
+                pane: 'overlayPane'
+            });
         });
-    });
+    }
 }
 
 function updateMarkersPie_realTime(markerFeatureGroup) {
@@ -107,7 +109,6 @@ function updateMarkersPie_realTime(markerFeatureGroup) {
     });
 }
 
-// TODO !!!!!!!!!! SOME PROBLEM WITH marker updater - when is Play history runned second time, marker updater is not cleared and there run two instances -> maybe make object in index script with marker updater as a attribute and then change it serially
 // TODO move this right into python views so I do not need to get whole history, just what I need right in SQL (get just history I need from history moment)
 function playHistory_oneStep(data, keys, history_moment, history_size, range_size, markerClusterGroup) {
     if (history_moment.index >= history_size) {
@@ -115,6 +116,7 @@ function playHistory_oneStep(data, keys, history_moment, history_size, range_siz
         document.getElementById("time_label").innerHTML = `Live`;
         history_moment.index = 0;
         document.getElementById("live_button").style.display = "none";
+        updateMarkersPie_realTime(markerClusterGroup)
         clearInterval(marker_updater);
         marker_updater = setInterval(() => updateMarkersPie_realTime(markerClusterGroup), 10000);
         return;
@@ -181,19 +183,19 @@ function addLegendPie(map) {
     legend.onAdd = function (map) {
         var legendDiv =  L.DomUtil.create('div', 'info legend'),
             checkins = ['running jobs', 'queued jobs', 'failed jobs'],
-            title = '<img style="padding-left: 20px" src="static/gjr_logo.png" width="230">',
+            title = '<img style="padding-left: 30px" src="static/gjr_logo.png" width="230">',
             labels = ['<strong style="color: red; padding-left: 20px">ver.: 0.01 UNDER DEVELOPMENT</strong><br>'];
         for (var i=0; i < checkins.length; i++) {
-            labels.push(
-                '<i class="square" style="background:' + getColor(checkins[i]) + '"></i><p>' + checkins[i] + '</p>')
+            labels.push('<i id="square" style="background:' + getColor(checkins[i]) + '">' + checkins[i] + '</i><br><p> </p>');
         }
         labels.push(`<strong style="padding-left: 20px">from CESNET</strong><br>`);
         labels.push(
             `<select name="history_window" id="history_window">
+                <option value="minute">last 10 minutes</option>
                 <option value="hour">last hour</option>
                 <option value="day">last day</option>
-                <option value="month">last month</option>
-                <option value="year">last year</option>
+                <!-- <option value="month">last month</option> -->
+                <!-- <option value="year">last year</option> -->
             </select>
             <button type="button" id="history_button" class="history_button" name="play_history">Play history</button>
             <input type="range" id="history_range" class="history_range" name="history_range" min="0" max="100" value="0"></input>
@@ -220,7 +222,7 @@ function add_galaxy_eu_node_and_its_polylines(map, galaxy_icon_path) {
 
     // Galaxy servers points
     const galaxies = [
-        { name: 'usegalaxy.eu', coordinates: [48.9731131, 9.3016003], color: get_rand_color() },
+        { name: 'usegalaxy.eu', coordinates: [48.9731131, 9.3016003], color: get_rand_color() }
         // { name: 'usegalaxy.org', coordinates: [43.000000, -75.000000], color: get_rand_color() },
         // { name: 'usegalaxy.au', coordinates: [-33.865143, 151.209900], color: get_rand_color() },
         // { name: 'usegalaxy.cz', coordinates: [50.2117769, 15.3615611], color: get_rand_color() },
