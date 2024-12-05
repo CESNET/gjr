@@ -147,8 +147,6 @@ function updateMarkersPie_playHistory(markerClusterGroup) {
         var history_moment_index = Math.round((history_size / range_size) * moment);
         var history_moment = { index: history_moment_index };
 
-        // TODO also print current timestamp to the left upper corner -> I need to put there, style it in css, and position it inc css in base.html some text window and change it every time it changes, but I do not want to have there timestamp in live view -> in live view tere will be just LIVE, or something like that in TV news
-
         // TODO: unreliable - need to make it different (dictionary does not have order you can rely on)
         const keys = Object.keys(data);
 

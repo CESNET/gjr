@@ -1,3 +1,5 @@
+# TODO use just store_influx_history_once as a library so there is no code duplication
+
 import random
 import time
 import os

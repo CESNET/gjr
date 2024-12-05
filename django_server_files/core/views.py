@@ -73,6 +73,7 @@ def play_history(request, history_range, history_window):
 
     return JsonResponse(grouped_data, safe=False)
 
+# TODO not implemented yet, not in use
 def show_history_moment(request, history_range):
     history_object = History.objects.all()
 

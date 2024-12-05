@@ -1,3 +1,5 @@
+# TODO use just take_data_from_influx_once as a library so there is no code duplication
+
 import random
 import time
 import os
