@@ -1,7 +1,0 @@
-* * * * * echo "hello"; /app/galaxy_visualization/influx_task.sh >> /var/log/cron.log
-* * * * * sleep 10; echo "hello"; /app/galaxy_visualization/influx_task.sh >> /var/log/cron.log
-* * * * * sleep 20; echo "hello"; /app/galaxy_visualization/influx_task.sh >> /var/log/cron.log
-* * * * * sleep 30; echo "hello"; /app/galaxy_visualization/influx_task.sh >> /var/log/cron.log
-* * * * * sleep 40; echo "hello"; /app/galaxy_visualization/influx_task.sh >> /var/log/cron.log
-* * * * * sleep 50; echo "hello"; /app/galaxy_visualization/influx_task.sh >> /var/log/cron.log
-
