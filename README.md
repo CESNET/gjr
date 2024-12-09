@@ -77,4 +77,4 @@ python3 manage.py take_data_from_influx
 ```
 
 ### Use real data from galaxy eu influxdb
-To be able use data from influx database of real galaxies you need to set your environment variables with .env file:
+To be able use data from influx database of real galaxies you need to set your environment variables with .env file.
