@@ -186,7 +186,7 @@ function addLegendPie(map) {
         for (var i=0; i < checkins.length; i++) {
             labels.push('<i id="square" style="background:' + getColor(checkins[i]) + '">' + checkins[i] + '</i><br><p> </p>');
         }
-        labels.push(`<strong style="padding-left: 20px">from CESNET</strong><br>`);
+        labels.push(`<span style="padding-left: 20px">source: <a target="_blank" href="https://github.com/CESNET/gjr">github.com/CESNET/gjr</a></span><br>`);
         labels.push(
             `<select name="history_window" id="history_window">
                 <option value="minute">last 10 minutes</option>
