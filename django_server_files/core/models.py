@@ -20,3 +20,10 @@ class History(models.Model):
     running_jobs = models.IntegerField()
     failed_jobs = models.IntegerField()
     timestamp = models.DateTimeField()
+
+class RRDPulsar(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    rrd_path = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
