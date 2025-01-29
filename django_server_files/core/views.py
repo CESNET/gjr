@@ -67,7 +67,6 @@ def play_history(request, history_range, history_window):
                  timestamp_data.append(entry)
 
         except Pulsar.DoesNotExist:
-            # TODO handle error
             error = "Pulsar from history: " + history.name + " does not exist!"
             logger.warning(error)
 
