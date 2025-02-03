@@ -8,6 +8,8 @@ ADD crontab /etc/cron.d/run_influx_rutines
 COPY . .
 
 # download dependecies
+RUN apt-get update && apt-get install gcc make
+RUN apt-get install -y librrd-dev
 RUN pip install --no-cache-dir -r requirements.txt && apt-get update
 
 # Give execution rights on the cron job
