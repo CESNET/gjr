@@ -9,6 +9,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# TODO move store influx history once and take data from influx once to one file so i have only one request on influx and no two
+
 class Command(BaseCommand):
     help = "Store history of InfluxDB for one moment"
 
