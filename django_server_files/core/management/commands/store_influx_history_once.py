@@ -14,13 +14,16 @@ class Command(BaseCommand):
 
     # password from environment variable
     influxdb_password = os.environ.get('INFLUXDB_GALAXY_EU_PASSWORD')
-    # influx client
-    client = InfluxDBClient(host="influxdb.galaxyproject.eu", port=8086, username="esg", password=self.influxdb_password, database="galaxy", ssl=True, verify_ssl=True)
+
+    # TODO do not start client on every request but in general for whole class
 
     def handle(self, *args, **options):
         # TODO make one influx utils where will be function for connecting and queries and that will be used across different scripts, also other utils
 
         logger.info("Storing influx DB history...")
+
+        # influx client
+        client = InfluxDBClient(host="influxdb.galaxyproject.eu", port=8086, username="esg", password=self.influxdb_password, database="galaxy", ssl=True, verify_ssl=True)
 
         results = client.query(
             'SELECT last("count") FROM "queue_by_destination" GROUP BY "destination_id", "state"'

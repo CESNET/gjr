@@ -15,11 +15,15 @@ class Command(BaseCommand):
     # password from environment variable
     influxdb_password = os.environ.get('INFLUXDB_GALAXY_EU_PASSWORD')
 
-    def handle(self, *args, **options):
-        client = InfluxDBClient(host="influxdb.galaxyproject.eu", port=8086, username="esg", password=self.influxdb_password, database="galaxy", ssl=True, verify_ssl=True)
+    # TODO do not start client on every request but in general for whole class
 
+    def handle(self, *args, **options):
         logger.info("Pulsar job number updating...")
 
+        # influx client
+        client = InfluxDBClient(host="influxdb.galaxyproject.eu", port=8086, username="esg", password=self.influxdb_password, database="galaxy", ssl=True, verify_ssl=True)
+
+        # clear pulsars TODO: stop saving all the time pulsar - make it just after all computations (else I am getting all zeroes)
         for pulsar in Pulsar.objects.all():
             pulsar.queued_jobs = 0;
             pulsar.running_jobs = 0;
