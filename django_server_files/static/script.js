@@ -118,7 +118,7 @@ function playHistory_oneStep(data, keys, history_moment, history_size, range_siz
         document.getElementById("live_button").style.display = "none";
         updateMarkersPie_realTime(markerClusterGroup)
         clearInterval(marker_updater);
-        marker_updater = setInterval(() => updateMarkersPie_realTime(markerClusterGroup), 10000);
+        marker_updater = setInterval(() => updateMarkersPie_realTime(markerClusterGroup), 20000);
         return;
     }
     var timestamp = keys[history_moment.index];
