@@ -3,6 +3,7 @@ import time
 import os
 from django.core.management.base import BaseCommand
 from core.models import Pulsar
+from core.models import History
 from influxdb import InfluxDBClient
 from django.utils import timezone
 import logging
@@ -70,7 +71,7 @@ class Command(BaseCommand):
         store_history_db(self, db_dict)
 
 #extract raw reponse from influxDB to dictionary and return dict
-def influxdb_response_to_dict(reponse):
+def influxdb_response_to_dict(response):
     logger.info("Creating data structure with influx data.")
 
     # init dict for all pulsars data from influxdb of form
@@ -107,7 +108,7 @@ def influxdb_response_to_dict(reponse):
         logger.error("Bad influxDB response.")
 
     logger.info("Data structure for influx data created.")
-    return db_data
+    return destination_dict
 
 # updates pulsar database with current influx data
 def update_pulsar_db(self, destination_dict):
@@ -145,9 +146,9 @@ def store_history_db(self, destination_dict):
             History.objects.create(
                 name=destination_id,
                 galaxy="usegalaxy.eu",
-                pulsar.queued_jobs += destination_dict[destination_id]["queued"],
-                pulsar.running_jobs += destination_dict[destination_id]["running"],
-                pulsar.failed_jobs += destination_dict[destination_id]["failed"],
+                queued_jobs=destination_dict[destination_id]["queued"],
+                running_jobs=destination_dict[destination_id]["running"],
+                failed_jobs=destination_dict[destination_id]["failed"],
                 timestamp=current_time
             )
 
