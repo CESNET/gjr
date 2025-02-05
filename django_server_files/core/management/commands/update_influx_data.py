@@ -2,8 +2,7 @@ import random
 import time
 import os
 from django.core.management.base import BaseCommand
-from core.models import Pulsar
-from core.models import History
+from core.models import Pulsar, History
 from influxdb import InfluxDBClient
 from django.utils import timezone
 import logging
@@ -70,7 +69,7 @@ class Command(BaseCommand):
         update_pulsar_db(self, db_dict)
         store_history_db(self, db_dict)
 
-#extract raw reponse from influxDB to dictionary and return dict
+# extract raw reponse from influxDB to dictionary and return dict
 def influxdb_response_to_dict(response):
     logger.info("Creating data structure with influx data.")
 
@@ -115,7 +114,7 @@ def update_pulsar_db(self, destination_dict):
     logger.info("Updating pulsar db.")
 
     for pulsar in Pulsar.objects.all():
-        if pulsar in destination_dict:
+        if pulsar.name in destination_dict:
             pulsar.queued_jobs = destination_dict[pulsar.name]["queued"]
             pulsar.running_jobs = destination_dict[pulsar.name]["running"]
             pulsar.failed_jobs = destination_dict[pulsar.name]["failed"]
