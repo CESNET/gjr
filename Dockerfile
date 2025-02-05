@@ -26,8 +26,5 @@ RUN apt-get -y install cron
 # open port
 EXPOSE 8000
 
-# prepare app database
-RUN python /app/django_server_files/manage.py migrate && python /app/django_server_files/manage.py create_pulsars
-
-# Run the command on container startup
-CMD cron && python django_server_files/manage.py runserver 0.0.0.0:8000
+# Run the command on container startup (prepare mounted db, cron jobs and unserver)
+CMD python /app/django_server_files/manage.py migrate && python /app/django_server_files/manage.py create_pulsars && cron && python django_server_files/manage.py runserver 0.0.0.0:8000
