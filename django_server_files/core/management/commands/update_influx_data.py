@@ -67,7 +67,7 @@ class Command(BaseCommand):
         db_dict = influxdb_response_to_dict(results.raw)
 
         update_pulsar_db(self, db_dict)
-        store_history_db(self, db_dict):
+        store_history_db(self, db_dict)
 
 #extract raw reponse from influxDB to dictionary and return dict
 def influxdb_response_to_dict(reponse):
