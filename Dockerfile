@@ -8,7 +8,7 @@ ADD crontab /etc/cron.d/run_influx_rutines
 COPY . .
 
 # download dependecies
-RUN apt-get update && apt-get install gcc make
+RUN apt-get update && apt-get install -y gcc make
 RUN apt-get install -y librrd-dev
 RUN pip --default-timeout=200 install --no-cache-dir -r requirements.txt && apt-get update
 
@@ -27,7 +27,7 @@ RUN apt-get -y install cron
 EXPOSE 8000
 
 # prepare app database
-RUN python django_server_files/manage.py migrate && python django_server_files/manage.py create_pulsars
+RUN python django_server_files/manage.py makemigrations && python django_server_files/manage.py migrate && python django_server_files/manage.py create_pulsars
 
 # Run the command on container startup
 CMD cron && python django_server_files/manage.py runserver 0.0.0.0:8000
