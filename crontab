@@ -1,4 +1,3 @@
-HOME=/app/django_server_files
 * * * * * root /app/influx_task.sh >> /var/log/cron.log 2>&1
 * * * * * root sleep 20; /app/influx_task.sh >> /var/log/cron.log 2>&1
 * * * * * root sleep 40; /app/influx_task.sh >> /var/log/cron.log 2>&1

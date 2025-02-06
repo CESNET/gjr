@@ -44,12 +44,6 @@ function addLegendCircle(map) {
 }
 
 function renderPulsar(pulsar, markerFeatureGroup) {
-
-    // TODO remove later
-    if (pulsar.galaxy != "usegalaxy.eu") {
-         return;
-    }
-
     var pulsar_job_sum = pulsar.queued_jobs + pulsar.running_jobs + pulsar.failed_jobs
     var maximal_icon_size = 200;
     var minimal_icon_size = 35;
@@ -155,27 +149,6 @@ function updateMarkersPie_playHistory(markerClusterGroup) {
     });
 }
 
-function showHistoryMoment(markerClusterGroup) {
-    // stop real time view
-    clearInterval(marker_updater);
-    var moment = document.getElementById("history_range").value;
-    // calculate moment to data entries
-    var history_size = Object.keys(data).length;
-    var range_size = document.getElementById("history_range").getAttribute("max");
-    var history_moment_index = Math.round((history_size / range_size) * moment);
-    var history_moment = { index: history_moment_index };
-    var url = `/show-history-moment/${moment}/`
-    fetch(url, { method: "GET" }).then(response => response.json()).then(data => {
-        var timestamp = keys[0];
-        var pulsar = data[timestamp];
-        // change range history and label due to rendered data entries
-        document.getElementById("time_label").innerHTML = `${timestamp}`;
-        document.getElementById("history_range").value = Math.round(history_moment.index / (history_size / range_size));
-        markerClusterGroup.clearLayers();
-        renderPulsar(pulsar, markerClusterGroup);
-    });
-}
-
 function addLegendPie(map) {
     var legend = L.control({position: 'topright'});
     legend.onAdd = function (map) {
@@ -219,6 +192,7 @@ function add_galaxy_eu_node_and_its_polylines(map, galaxy_icon_path) {
     });
 
     // Galaxy servers points
+    // TODO: move to configuration file
     const galaxies = [
         { name: 'usegalaxy.eu', coordinates: [48.9731131, 9.3016003], color: get_rand_color() }
         // { name: 'usegalaxy.org', coordinates: [43.000000, -75.000000], color: get_rand_color() },
