@@ -48,7 +48,7 @@ def play_history(request, history_range, history_window):
                 'running_jobs': history.running_jobs,
                 'failed_jobs': history.failed_jobs,
             }
-            timestamp_data = grouped_data[str(history.timestamp)]
+            timestamp_data = grouped_data[str(history.timestamp.replace(microsecond=0))].append(entry)
         except Pulsar.DoesNotExist:
             logger.warning("Pulsar from history: " + history.name + " does not exist anymore!")
 
