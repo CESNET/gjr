@@ -7,7 +7,7 @@ from influxdb import InfluxDBClient
 from django.utils import timezone
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('django')
 
 class Command(BaseCommand):
     help = (

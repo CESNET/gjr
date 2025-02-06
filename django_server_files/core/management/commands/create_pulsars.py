@@ -2,6 +2,8 @@ import random
 from django.core.management.base import BaseCommand
 from core.models import Pulsar
 
+# TODO take from conf file data, log with logger
+
 class Command(BaseCommand):
     help = 'Generates pulsar objects in the database'
 

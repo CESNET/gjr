@@ -10,7 +10,7 @@ from django.utils import timezone
 from datetime import timedelta
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('django')
 
 def index(request):
     context = {'pulsars': list(Pulsar.objects.values('name', 'galaxy', 'latitude', 'longitude', 'queued_jobs', 'running_jobs', 'failed_jobs'))}

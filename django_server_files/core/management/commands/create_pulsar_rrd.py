@@ -3,7 +3,7 @@ import rrdtool
 import os
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('django')
 
 class Command(BaseCommand):
     help = 'Create RRD database for new pulsar'
