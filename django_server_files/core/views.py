@@ -9,21 +9,28 @@ from django.db.models.expressions import RawSQL
 from django.utils import timezone
 from datetime import timedelta
 import logging
+import threading
 
 logger = logging.getLogger('django')
 
 def index(request):
+    logger.info(f'thread {threading.current_thread().name} is preparing index')
     context = {'pulsars': list(Pulsar.objects.values('name', 'galaxy', 'latitude', 'longitude', 'queued_jobs', 'running_jobs', 'failed_jobs'))}
+    logger.info(f'thread {threading.current_thread().name} returns index')
     return render(request, 'index.html', context)
 
 
 def pulsar_positions(request):
-    return JsonResponse(
+    logger.info(f'thread {threading.current_thread().name} is preparing pulsar positions')
+    response = JsonResponse(
         {'pulsars': list(Pulsar.objects.values('name', 'galaxy', 'latitude', 'longitude', 'queued_jobs', 'running_jobs', 'failed_jobs'))}
     )
+    logger.info(f'thread {threading.current_thread().name} returns pulsar positions')
+    return response
 
 def play_history(request, history_range, history_window):
     # TODO use history range
+    logger.info(f'thread {threading.current_thread().name} is preparing play history')
     now = timezone.now()
     if history_window == "minute":
         history_objects = History.objects.filter(timestamp__gte=(now - timedelta(minutes=10)))
@@ -34,6 +41,7 @@ def play_history(request, history_range, history_window):
     else:
         logger.critical("bad history window request")
         return JsonResponse({}, safe=False)
+    logger.info(f'thread {threading.current_thread().name} took data from database for play history')
     # Initialize a dictionary to group by timestamp
     grouped_data = defaultdict(list)
     for history in history_objects:
@@ -50,6 +58,6 @@ def play_history(request, history_range, history_window):
             }
             timestamp_data = grouped_data[str(history.timestamp.replace(microsecond=0))].append(entry)
         except Pulsar.DoesNotExist:
-            logger.warning("Pulsar from history: " + history.name + " does not exist anymore!")
-
+            logger.info("Pulsar from history: " + history.name + " does not exist anymore!")
+    logger.info(f'thread {threading.current_thread().name} returns play history')
     return JsonResponse(grouped_data, safe=False)

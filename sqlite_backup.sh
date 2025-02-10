@@ -4,8 +4,8 @@
 DATE=$(date +"%Y-%m-%d")
 
 # Path to the database and the backup directory
-DB_PATH="/data/db.sqlite3"
-BACKUP_DIR="/backup"
+DB_PATH="/app/django_server_files/db.sqlite3"
+BACKUP_DIR="/app/backup"
 BACKUP_FILE="${BACKUP_DIR}/backup_${DATE}.sqlite3"
 
 # Create a backup
