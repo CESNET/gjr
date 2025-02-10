@@ -4,7 +4,7 @@
 python /app/django_server_files/manage.py migrate
 
 # Create pulsars
-python /app/django_server_files/manage.py create_pulsars
+# python /app/django_server_files/manage.py create_pulsars
 
 # Start cron service
 cron
