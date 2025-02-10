@@ -155,7 +155,7 @@ function addLegendPie(map) {
         var legendDiv =  L.DomUtil.create('div', 'info legend'),
             checkins = ['running jobs', 'queued jobs', 'failed jobs'],
             title = '<img style="padding-left: 30px" src="static/gjr_logo.png" width="230">',
-            labels = ['<strong style="color: red; padding-left: 20px">ver.: 0.01 UNDER DEVELOPMENT</strong><br>'];
+            labels = ['<strong style="color: red; padding-left: 20px">ver.: 0.02 UNDER DEVELOPMENT</strong><br>'];
         for (var i=0; i < checkins.length; i++) {
             labels.push('<i id="square" style="background:' + getColor(checkins[i]) + '">' + checkins[i] + '</i><br><p> </p>');
         }
