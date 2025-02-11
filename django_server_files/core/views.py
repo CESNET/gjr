@@ -9,24 +9,28 @@ from django.db.models.expressions import RawSQL
 from django.utils import timezone
 from datetime import timedelta
 import logging
+import threading
 
-logger = logging.getLogger(__name__)
-
-# Create your views here.
+logger = logging.getLogger('django')
 
 def index(request):
+    logger.info(f'thread {threading.current_thread().name} is preparing index')
     context = {'pulsars': list(Pulsar.objects.values('name', 'galaxy', 'latitude', 'longitude', 'queued_jobs', 'running_jobs', 'failed_jobs'))}
+    logger.info(f'thread {threading.current_thread().name} returns index')
     return render(request, 'index.html', context)
 
 
 def pulsar_positions(request):
-    return JsonResponse(
+    logger.info(f'thread {threading.current_thread().name} is preparing pulsar positions')
+    response = JsonResponse(
         {'pulsars': list(Pulsar.objects.values('name', 'galaxy', 'latitude', 'longitude', 'queued_jobs', 'running_jobs', 'failed_jobs'))}
     )
+    logger.info(f'thread {threading.current_thread().name} returns pulsar positions')
+    return response
 
 def play_history(request, history_range, history_window):
-    # TODO use history range and handle that it is in bounds
-
+    # TODO use history range
+    logger.info(f'thread {threading.current_thread().name} is preparing play history')
     now = timezone.now()
     if history_window == "minute":
         history_objects = History.objects.filter(timestamp__gte=(now - timedelta(minutes=10)))
@@ -34,20 +38,12 @@ def play_history(request, history_range, history_window):
         history_objects = History.objects.filter(timestamp__gte=(now - timedelta(hours=1)), timestamp__second__gte=30)
     elif history_window == "day":
         history_objects = History.objects.filter(timestamp__gte=(now - timedelta(days=1)), timestamp__minute__gte=30)
-    elif history_window == "month":
-        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(weeks=4)), timestamp__hour=0, timestamp__minute=0, timestamp__second__gte=30)
-    elif history_window == "year":
-        history_objects = History.objects.filter(timestamp__gte=(now - timedelta(weeks=48)), timestamp__hour=0, timestamp__minute=0, timestamp__second__gte=30)
     else:
-        print("bad history window request")
         logger.critical("bad history window request")
         return JsonResponse({}, safe=False)
-
+    logger.info(f'thread {threading.current_thread().name} took data from database for play history')
     # Initialize a dictionary to group by timestamp
     grouped_data = defaultdict(list)
-
-    # Populate the dictionary
-    # TODO: redo this into SQL so it is quicker and I do not need to go through history lineary multiple time
     for history in history_objects:
         try:
             pulsar = Pulsar.objects.get(name=history.name, galaxy=history.galaxy)
@@ -60,49 +56,8 @@ def play_history(request, history_range, history_window):
                 'running_jobs': history.running_jobs,
                 'failed_jobs': history.failed_jobs,
             }
-            timestamp_data = grouped_data[str(history.timestamp.replace(microsecond=0))] # second=0
-            # TODO: not great -> it also should be done in SQL already so I do not have more same pulsars in one category due to different time frames
-
-            if not any(e['name'] == entry['name'] and e['galaxy'] ==  entry['galaxy'] for e in timestamp_data):
-                 timestamp_data.append(entry)
-
+            timestamp_data = grouped_data[str(history.timestamp.replace(microsecond=0))].append(entry)
         except Pulsar.DoesNotExist:
-            # TODO handle error
-            error = "Pulsar from history: " + history.name + " does not exist!"
-            logger.warning(error)
-
+            logger.info("Pulsar from history: " + history.name + " does not exist anymore!")
+    logger.info(f'thread {threading.current_thread().name} returns play history')
     return JsonResponse(grouped_data, safe=False)
-
-# TODO not implemented yet, not in use
-def show_history_moment(request, history_range):
-    history_object = History.objects.all()
-
-    # Populate the dictionary
-    # TODO: redo this into SQL so it is quicker and I do not need to go through history lineary multiple time
-    for history in history_objects:
-        try:
-            pulsar = Pulsar.objects.get(name=history.name, galaxy=history.galaxy)
-            entry = {
-                'name': history.name,
-                'galaxy': history.galaxy,
-                'latitude': pulsar.latitude,
-                'longitude': pulsar.longitude,
-                'queued_jobs': history.queued_jobs,
-                'running_jobs': history.running_jobs,
-                'failed_jobs': history.failed_jobs,
-            }
-            timestamp_data = grouped_data[str(history.timestamp.replace(microsecond=0, second=0))]
-            # TODO: not great -> it also should be done in SQL already so I do not have more same pulsars in one category due to different time frames
-
-            if not any(e['name'] == entry['name'] and e['galaxy'] == entry['galaxy'] for e in timestamp_data):
-                timestamp_data.append(entry)
-
-        except Pulsar.DoesNotExist:
-            # TODO handle error
-            # print("Pulsar from history does not exist!", history.name)
-            error = "Pulsar from history does not exist!"
-            logger.warning(error)
-
-    # Convert the defaultdict to a regular dictionary for JSON serialization
-    data = {timestamp: entries for timestamp, entries in grouped_data.items()}
-    return JsonResponse(data, safe=False)

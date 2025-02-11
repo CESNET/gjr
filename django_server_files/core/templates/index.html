@@ -24,7 +24,7 @@
         }
 
         updateMarkersPie_realTime(markerClusterGroup)
-        marker_updater = setInterval(() => updateMarkersPie_realTime(markerClusterGroup), 10000);
+        marker_updater = setInterval(() => updateMarkersPie_realTime(markerClusterGroup), 20000);
 
         document.getElementById('history_button').onclick = function() {
             updateMarkersPie_playHistory(markerClusterGroup);
@@ -36,10 +36,8 @@
             document.getElementById("time_label").innerHTML = `Live`;
             updateMarkersPie_realTime(markerClusterGroup)
             clearInterval(marker_updater);
-            marker_updater = setInterval(() => updateMarkersPie_realTime(markerClusterGroup), 10000);
+            marker_updater = setInterval(() => updateMarkersPie_realTime(markerClusterGroup), 20000);
         };
-
-        // document.getElementById('history_range').onchange = showHistoryMoment(markerClusterGroup);
     });
 </script>
 

@@ -3,4 +3,4 @@ __pycache__
 db.sqlite3
 notes*.txt
 .env
-debug.log
+logs.log

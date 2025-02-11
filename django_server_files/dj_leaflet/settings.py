@@ -2,6 +2,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
 import os
+import logging
+import datetime
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -92,15 +94,28 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Logging system
+# Custom Formatter to format time in ISO 8601 with milliseconds
+class ISO8601Formatter(logging.Formatter):
+    def formatTime(self, record, datefmt=None):
+        dt = datetime.datetime.fromtimestamp(record.created, datetime.timezone.utc).astimezone()
+        return dt.isoformat(sep="T", timespec="milliseconds")
+
+# Logging configuration
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "iso8601": {
+            "()": ISO8601Formatter,
+            "format": "%(asctime)s [%(levelname)s] %(message)s",
+        },
+    },
     "handlers": {
         "file": {
-            "level": "DEBUG",
+            "level": "DEBUG",  # Capture all logs from level DEBUG and above
             "class": "logging.FileHandler",
-            "filename": BASE_DIR / "debug.log",
+            "filename": BASE_DIR / "logs.log",
+            "formatter": "iso8601",
         },
     },
     "loggers": {
@@ -111,7 +126,6 @@ LOGGING = {
         },
     },
 }
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
