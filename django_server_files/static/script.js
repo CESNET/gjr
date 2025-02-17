@@ -3,7 +3,8 @@ var marker_updater;
 
 function createMap(center, zoom) {
     let map = L.map('map').setView(center, zoom);
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    // L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
     return map
 }
 
