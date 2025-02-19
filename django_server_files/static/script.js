@@ -195,7 +195,7 @@ function add_galaxy_eu_node_and_its_polylines(map, galaxy_icon_path) {
     // Galaxy servers points
     // TODO: move to configuration file
     const galaxies = [
-        { name: 'usegalaxy.eu', coordinates: [48.012669109891426, 7.835061597283835], color: get_rand_color() }
+        { name: 'usegalaxy.eu', coordinates: [48.012669109891426, 7.835061597283835], color: "#80aaff"}
         // { name: 'usegalaxy.org', coordinates: [43.000000, -75.000000], color: get_rand_color() },
         // { name: 'usegalaxy.au', coordinates: [-33.865143, 151.209900], color: get_rand_color() },
         // { name: 'usegalaxy.cz', coordinates: [50.2117769, 15.3615611], color: get_rand_color() },
