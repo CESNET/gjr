@@ -9,7 +9,7 @@ html, body, #map {
     border-radius: 10px;
     width: 270px;
     height: 340px;
-    background: rgba(240, 240, 240, 0.8);
+    background: rgba(240, 240, 240, 1);
 }
 
 .legend i {
@@ -31,7 +31,7 @@ html, body, #map {
     border-radius: 10px;
     width: 270px;
     height: 50px;
-    background: rgba(240, 240, 240, 0.8);
+    background: rgba(240, 240, 240, 1);
     margin-bottom: 5px;
     font-weight: bold;
 }
@@ -51,7 +51,7 @@ html, body, #map {
     border-radius: 10px;
     width: 270px;
     height: 50px;
-    background: rgba(240, 240, 240, 0.8);
+    background: rgba(240, 240, 240, 1);
     display: none;
     color: red;
     font-weight: bold;
@@ -69,13 +69,13 @@ html, body, #map {
     border-radius: 10px;
     width: 270px;
     height: 30px;
-    background: rgba(240, 240, 240, 0.8);
+    background: rgba(240, 240, 240, 1);
     margin-bottom: 5px;
 }
 
 #history_window:hover {
     border: 2px solid white;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 1);
     color: white;
 }
 
@@ -111,17 +111,17 @@ html, body, #map {
 }
 
 #map .runner_icon_green {
-    background: rgba(62, 164, 16, 0.4);
+    background: rgba(62, 164, 16, 0.6);
 }
 
 #map .runner_icon_orange {
-    background: rgba(255, 148, 42, 0.4);
+    background: rgba(255, 148, 42, 0.6);
 }
 
 #map .runner_icon_red {
-    background: rgba(255, 0, 0, 0.4);
+    background: rgba(255, 0, 0, 0.6);
 }
 
 #map .runner_icon_empty {
-    background: rgba(230, 230, 255, 0.8);
+    background: rgba(230, 230, 255, 0.6);
 }
