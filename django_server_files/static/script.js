@@ -104,7 +104,6 @@ function updateMarkersPie_realTime(markerFeatureGroup) {
     });
 }
 
-// TODO move this right into python views so I do not need to get whole history, just what I need right in SQL (get just history I need from history moment)
 function playHistory_oneStep(data, keys, history_moment, history_size, range_size, markerClusterGroup) {
     if (history_moment.index >= history_size) {
         document.getElementById("history_range").value = 0;
@@ -163,11 +162,11 @@ function addLegendPie(map) {
         labels.push(`<span style="padding-left: 20px">source: <a target="_blank" href="https://github.com/CESNET/gjr">github.com/CESNET/gjr</a></span><br>`);
         labels.push(
             `<select name="history_window" id="history_window">
-                <option value="minute">last 10 minutes</option>
-                <option value="hour">last hour</option>
-                <option value="day">last day</option>
-                <!-- <option value="month">last month</option> -->
-                <!-- <option value="year">last year</option> -->
+                <option value="minute">last 10 minutes (average per minute)</option>
+                <option value="hour">last hour (average per minute)</option>
+                <option value="day">last day (average per hour)</option>
+                <!-- <option value="month">last month (average per day)</option> -->
+                <!-- <option value="year">last year (average per month)</option> -->
             </select>
             <button type="button" id="history_button" class="history_button" name="play_history">Play history</button>
             <input type="range" id="history_range" class="history_range" name="history_range" min="0" max="100" value="0"></input>
