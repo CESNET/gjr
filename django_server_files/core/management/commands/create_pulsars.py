@@ -61,7 +61,7 @@ def add_galaxy(pulsars, galaxy):
 
 galaxy_eu_pulsars_real = [
     # eu pbs
-    ("eu_pbs", 48.9731131, 9.3016003), # posunout o kousek doprava nahoru nad pulsar +1 +1
+    ("eu_pbs", 48.012669109891426, 7.835061597283835), # posunout o kousek doprava nahoru nad pulsar +1 +1
     # Freiburg - Mira's pulsar
     ("pulsar_mira_tpv", 48.1731131, 8.9016003),
     # Freiburg - Snajay's pulsar
@@ -78,7 +78,7 @@ galaxy_eu_pulsars_real = [
     ("pulsar_be_tpv", 50.8476, 4.3572),
     # Prague - MetaCentrum
     ("pulsar_cz01_tpv", 50.0755, 14.4378),
-    ("pulsar_cz02_tpv", 50.1755, 14.5378),
+    ("pulsar_cz02_tpv", 50.09902989683802, 14.38859386931844),
     # pulsar_egi01_tpv
     # Bratislava - IISAS
     ("pulsar_sk01_tpv", 48.148598, 17.107748),

@@ -3,7 +3,8 @@ var marker_updater;
 
 function createMap(center, zoom) {
     let map = L.map('map').setView(center, zoom);
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    // L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
     return map
 }
 
@@ -103,7 +104,6 @@ function updateMarkersPie_realTime(markerFeatureGroup) {
     });
 }
 
-// TODO move this right into python views so I do not need to get whole history, just what I need right in SQL (get just history I need from history moment)
 function playHistory_oneStep(data, keys, history_moment, history_size, range_size, markerClusterGroup) {
     if (history_moment.index >= history_size) {
         document.getElementById("history_range").value = 0;
@@ -162,11 +162,11 @@ function addLegendPie(map) {
         labels.push(`<span style="padding-left: 20px">source: <a target="_blank" href="https://github.com/CESNET/gjr">github.com/CESNET/gjr</a></span><br>`);
         labels.push(
             `<select name="history_window" id="history_window">
-                <option value="minute">last 10 minutes</option>
-                <option value="hour">last hour</option>
-                <option value="day">last day</option>
-                <!-- <option value="month">last month</option> -->
-                <!-- <option value="year">last year</option> -->
+                <option value="minute">last 10 minutes (average per minute)</option>
+                <option value="hour">last hour (average per minute)</option>
+                <option value="day">last day (average per hour)</option>
+                <!-- <option value="month">last month (average per day)</option> -->
+                <!-- <option value="year">last year (average per month)</option> -->
             </select>
             <button type="button" id="history_button" class="history_button" name="play_history">Play history</button>
             <input type="range" id="history_range" class="history_range" name="history_range" min="0" max="100" value="0"></input>
@@ -194,7 +194,7 @@ function add_galaxy_eu_node_and_its_polylines(map, galaxy_icon_path) {
     // Galaxy servers points
     // TODO: move to configuration file
     const galaxies = [
-        { name: 'usegalaxy.eu', coordinates: [48.9731131, 9.3016003], color: get_rand_color() }
+        { name: 'usegalaxy.eu', coordinates: [48.012669109891426, 7.835061597283835], color: "#80aaff"}
         // { name: 'usegalaxy.org', coordinates: [43.000000, -75.000000], color: get_rand_color() },
         // { name: 'usegalaxy.au', coordinates: [-33.865143, 151.209900], color: get_rand_color() },
         // { name: 'usegalaxy.cz', coordinates: [50.2117769, 15.3615611], color: get_rand_color() },
