@@ -80,9 +80,9 @@ def play_history(request, history_range, history_window):
                     'galaxy': history['galaxy'],
                     'latitude': pulsar.latitude,
                     'longitude': pulsar.longitude,
-                    'queued_jobs': history['average_queued_jobs'],
-                    'running_jobs': history['average_running_jobs'],
-                    'failed_jobs': history['average_failed_jobs'],
+                    'queued_jobs': round(history['average_queued_jobs'], 2),
+                    'running_jobs': round(history['average_running_jobs'], 2),
+                    'failed_jobs': round(history['average_failed_jobs'], 2)
                 }
                 timestamp_key = str(history['truncated'])
                 grouped_data[timestamp_key].append(entry)
