@@ -26,7 +26,6 @@ class Command(BaseCommand):
             logger.warning("INFLUXDB_GALAXY_EU_PASSWORD environment variable is not set.")
 
         # Establish the InfluxDB client
-
         try:
             logger.info("Connecting to influxDB.")
             self.client = InfluxDBClient(
@@ -53,24 +52,22 @@ class Command(BaseCommand):
         else:
             logger.error("InfluxDB connection failed.")
 
-        # request influxDB
-
-        logger.info("Requesting influxDB with SQL query.")
-
         # init dict for all pulsars data from influxdb of form
         # {"destination_id" : {
         #    "failed"  : num,
         #    "longest" : [{tool : toolname, hours : num}],
+        #    "tools"   : []
         # }
         destination_dict = {}
 
-        self.failed_influxdb_response_to_dict(destination_dict)
-        self.longest_influxdb_response_to_dict(destination_dict)
+        # self.failed_influxdb_response_to_dict(destination_dict)
+        # self.longest_influxdb_response_to_dict(destination_dict)
+        self.anonymous_user_influxdb_response_to_dict(destination_dict)
 
         print(destination_dict)
 
-        update_pulsar_db(self, destination_dict)
-        store_history_db(self, destination_dict)
+        # update_pulsar_db(self, destination_dict)
+        # store_history_db(self, destination_dict)
 
     def failed_influxdb_response_to_dict(self, destination_dict):
         logger.info("Storing failed jobs data")
@@ -140,6 +137,16 @@ class Command(BaseCommand):
         else:
             print("No data retrieved from InfluxDB.")
 
+    def anonymous_user_influxdb_response_to_dict(self, destination_dict):
+        logger.info("Storing anonymous user jobs data")
+
+        results = self.client.query(
+            'SELECT * FROM "anonymous_user_jobs_by_destination"'
+        )
+
+        print(results.raw)
+
+
 # updates pulsar database with current influx data
 def update_pulsar_db(self, destination_dict):
     logger.info("Updating pulsar db.")
@@ -157,6 +164,7 @@ def update_pulsar_db(self, destination_dict):
     logger.info("Pulsar db updated.")
 
 # store current influx data into history database
+# TODO failed jobs store to every record in last hour?
 def store_history_db(self, destination_dict):
     logger.info("Updating history db.")
 

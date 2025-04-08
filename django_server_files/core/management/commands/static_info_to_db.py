@@ -9,6 +9,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # add_random_pulsars()
+        add_galaxy_server("usegalaxy.eu")
         add_galaxy(galaxy_eu_pulsars_real, 'usegalaxy.eu')
         # add_galaxy(galaxy_eu_pulsars, 'usegalaxy.eu')
         # add_galaxy(galaxy_cz_pulsars, 'usegalaxy.cz')
@@ -19,6 +20,13 @@ class Command(BaseCommand):
         # add_galaxy(galaxy_org_pulsars, 'usegalaxy.org')
         # add_galaxy(galaxy_fr_pulsars, 'usegalaxy.fr')
         # add_galaxy(galaxy_sp_pulsars, 'usegalaxy.sp')
+
+def add_galaxy_server(galaxy_name):
+    Galaxy.objects.create(
+            name="usegalaxy.eu",
+            latitude=48.012669109891426,
+            longitude=7.835061597283835
+        )
 
 def add_random_pulsars():
     NUM_PULSARS_TO_GENERATE = 5

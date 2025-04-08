@@ -1,6 +1,11 @@
 from django.db import models
 
-# Create your models here.
+class Galaxy(models.Model):
+    name = models.CharField(max_length=20)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
+# live pulsar stats
 
 class Pulsar(models.Model):
     name = models.CharField(max_length=20)
@@ -10,8 +15,25 @@ class Pulsar(models.Model):
     queued_jobs = models.IntegerField()
     running_jobs = models.IntegerField()
     failed_jobs = models.IntegerField()
+    anonymous_jobs = models.IntegerField()
+    unique_users = models.IntegerField()
 
-# add models for galaxy servers?
+class PulsarLongestJobs(models.Model):
+    pulsar = models.ForeignKey('Pulsar', on_delete=models.CASCADE, related_name='longestjobs', null=True, blank=True)
+    tool = models.CharField(max_length=100)
+    hours = models.IntegerField()
+
+class PulsarMostUsedTools(models.Model):
+    pulsar = models.ForeignKey('Pulsar', on_delete=models.CASCADE, related_name='mostusedtools', null=True, blank=True)
+    tool = models.CharField(max_length=100)
+    job_num = models.IntegerField()
+
+class PulsarActiveUsers(models.Model):
+    pulsar = models.ForeignKey('Pulsar', on_delete=models.CASCADE, related_name='activeusers', null=True, blank=True)
+    user_id = models.CharField(max_length=50)
+    job_num = models.IntegerField()
+
+# history, TODO: put into different sqlite dbs
 
 class History(models.Model):
     name = models.CharField(max_length=20)
@@ -20,3 +42,36 @@ class History(models.Model):
     running_jobs = models.IntegerField()
     failed_jobs = models.IntegerField()
     timestamp = models.DateTimeField()
+
+class HistoryMonth(models.Model):
+    name = models.CharField(max_length=20)
+    galaxy = models.CharField(max_length=20)
+    queued_jobs_hour_avg = models.IntegerField()
+    running_jobs_hour_avg = models.IntegerField()
+    failed_jobs_hour_avg = models.IntegerField()
+    timestamp = models.DateTimeField()
+
+class HistoryYear(models.Model):
+    name = models.CharField(max_length=20)
+    galaxy = models.CharField(max_length=20)
+    queued_jobs_day_avg = models.IntegerField()
+    running_jobs_day_avg = models.IntegerField()
+    failed_jobs_day_avg = models.IntegerField()
+    timestamp = models.DateTimeField()
+
+class HistoryFinal(models.Model):
+    name = models.CharField(max_length=20)
+    galaxy = models.CharField(max_length=20)
+    queued_jobs_month_avg = models.IntegerField()
+    running_jobs_month_avg = models.IntegerField()
+    failed_jobs_month_avg = models.IntegerField()
+    timestamp = models.DateTimeField()
+
+# schedulling
+
+class ScheduleStats(models.Model):
+    job_id = models.CharField(max_length=20)
+    dest_id = models.CharField(max_length=20)
+    release = models.DateTimeField()
+    start = models.DateTimeField()
+    end = models.DateTimeField()

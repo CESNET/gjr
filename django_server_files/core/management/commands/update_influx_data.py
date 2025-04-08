@@ -25,7 +25,6 @@ class Command(BaseCommand):
             logger.warning("INFLUXDB_GALAXY_EU_PASSWORD environment variable is not set.")
 
         # Establish the InfluxDB client
-
         try:
             logger.info("Connecting to influxDB.")
             self.client = InfluxDBClient(
