@@ -18,6 +18,8 @@ RUN chmod +x /app/influx_task.sh
 RUN chmod +x /app/influx_task_hour.sh
 RUN chmod +x /app/sqlite_backup.sh
 RUN chmod +x /app/day_to_month_db.sh
+RUN chmod +x /app/month_to_year_db.sh
+RUN chmod +x /app/year_to_final_db.sh
 
 # Create the log file to be able to run tail
 RUN touch /var/log/cron.log
