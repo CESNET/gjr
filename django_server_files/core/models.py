@@ -12,11 +12,11 @@ class Pulsar(models.Model):
     galaxy = models.CharField(max_length=20)
     latitude = models.FloatField()
     longitude = models.FloatField()
-    queued_jobs = models.IntegerField()
-    running_jobs = models.IntegerField()
-    failed_jobs = models.IntegerField()
-    anonymous_jobs = models.IntegerField()
-    unique_users = models.IntegerField()
+    queued_jobs = models.IntegerField(null=False, default=0)
+    running_jobs = models.IntegerField(null=False, default=0)
+    failed_jobs = models.IntegerField(null=False, default=0)
+    anonymous_jobs = models.IntegerField(null=False, default=0)
+    unique_users = models.IntegerField(null=False, default=0)
 
 class PulsarLongestJobs(models.Model):
     pulsar = models.ForeignKey('Pulsar', on_delete=models.CASCADE, related_name='longestjobs', null=True, blank=True)

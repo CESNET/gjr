@@ -28,12 +28,18 @@
     <script src="{% static 'Leaflet.markercluster-1.4.1/dist/leaflet.markercluster.js' %}"></script>
 
     <!-- minicharts files -->
-
     <script src="https://unpkg.com/leaflet.minichart@0.2.5/dist/leaflet.minichart.min.js" charset="utf-8"></script>
 
-    <!-- my scripts -->
+    <!-- d3 files (graph library) -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
 
-    <script src="{% static 'script.js' %}"></script>
+    <!-- my scripts -->
+    <script src="{% static 'legend.js' %}"></script>
+    <script src="{% static 'map.js' %}"></script>
+    <script src="{% static 'initialize.js' %}"></script>
+    <script src="{% static 'pulsars.js' %}"></script>
+    <script src="{% static 'divider.js' %}"></script>
+    <script src="{% static 'eval_graph.js' %}"></script>
 
     <!-- my styles -->
     <link rel="stylesheet" href="{% static 'style.css' %}"/>
@@ -45,7 +51,7 @@
         var galaxy_icon = "{% static 'galaxy_logo.png' %}";
     </script>
 
-    <div class="container mt-4" style="height: 100%">
+    <div class="container mt-4" id="container" style="height: 100%">
         {% block content %}
         {% endblock %}
     </div>

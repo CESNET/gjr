@@ -3,8 +3,13 @@
 {% block content %}
 
 <div id="map"></div>
+<div id="divider"></div>
+<div id="eval-graph">
+    <span id="eval-pulsar-name">Pulsar name<span>
+</div>
 
-{{ pulsars|json_script:"pulsar-json" }}
+{{ pulsars_context|json_script:"pulsar-json" }}
+{{ galaxies_context|json_script:"galaxy-json" }}
 
 {% endblock %}
 
@@ -13,9 +18,34 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         let map = createMap([50, 8], 5);
-        addLegendPie(map);
-        add_galaxy_eu_node_and_its_polylines(map, galaxy_icon);
-        let pulsars = JSON.parse(document.getElementById('pulsar-json').textContent)
+        addLegend(map);
+
+        // TODO this will not be here, it will be shown only once user click on specifick pulsar with specific pulsar name as a input
+        addEvalGraph([data1, data2, data3]);
+
+        L.Control.Watermark = L.Control.extend({
+            onAdd: function(map) {
+                var img = L.DomUtil.create('img');
+
+                img.src = 'static/galaxy_project_logo_blue.png';
+                img.style.width = '100px';
+
+                return img;
+            },
+            onRemove: function(map) {
+                // Nothing to do here
+            }
+        });
+        L.control.watermark = function(opts) {
+            return new L.Control.Watermark(opts);
+        }
+        L.control.watermark({ position: 'bottomleft' }).addTo(map);
+
+        let pulsars = JSON.parse(document.getElementById('pulsar-json').textContent);
+        let galaxies = JSON.parse(document.getElementById('galaxy-json').textContent);
+
+        add_galaxy_nodes(map, galaxy_icon, galaxies);
+        add_galaxy_to_pulsars_polylines(map, galaxies, pulsars);
 
         let markerClusterGroup = L.markerClusterGroup().addTo(map);
 

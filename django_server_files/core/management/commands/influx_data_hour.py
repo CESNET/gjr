@@ -67,11 +67,9 @@ class Command(BaseCommand):
         self.failed_influxdb_response_to_dict(destination_dict)
         self.longest_influxdb_response_to_dict(destination_dict)
         self.most_used_tools_influxdb_response_to_dict(destination_dict)
-        # self.anonymous_user_influxdb_response_to_dict(destination_dict)
+        self.anonymous_user_influxdb_response_to_dict(destination_dict)
         self.num_user_running_jobs_influxdb_response_to_dict(destination_dict)
         self.unique_users_influxdb_response_to_dict(destination_dict)
-
-        print(destination_dict)
 
         update_live_dbs(self, destination_dict)
         store_history_db(self, destination_dict)
@@ -105,7 +103,6 @@ class Command(BaseCommand):
             logger.error("Bad influxDB response.")
 
         logger.info("Data structure for influx data created.")
-        return destination_dict
 
     def longest_influxdb_response_to_dict(self, destination_dict):
         logger.info("Storing longest jobs data")
@@ -197,11 +194,32 @@ class Command(BaseCommand):
     def anonymous_user_influxdb_response_to_dict(self, destination_dict):
         logger.info("Storing anonymous user jobs data")
 
-        results = self.client.query(
-            'SELECT * FROM "anonymous_user_jobs_by_destination"'
+        response = self.client.query(
+            'SELECT * FROM "anonymous_user_jobs_by_destination" WHERE time > now() - 1h'
         )
 
-        print(results.raw)
+        if 'series' in response:
+            for record in response['series'][0]['values']:
+                destination_id = record[2]
+                failed_num = int(record[1])
+
+                if not "pulsar" in destination_id:
+                    destination_id = "eu_pbs"
+
+                # check if destination is already in dict
+                if not destination_id in destination_dict:
+                    destination_dict[destination_id] = {
+                            "anonymous_jobs" : failed_num
+                        }
+                else:
+                    if not "anonymous_jobs" in destination_dict[destination_id]:
+                        destination_dict[destination_id]["anonymous_jobs"] = failed_num
+                    destination_dict[destination_id]["anonymous_jobs"] += failed_num
+
+        else:
+            logger.error("Bad influxDB response.")
+
+        logger.info("Data structure for influx data created.")
 
     def num_user_running_jobs_influxdb_response_to_dict(self, destination_dict):
         logger.info("Storing num user jobs data")
@@ -297,10 +315,14 @@ def update_live_dbs(self, destination_dict):
     # PulsarLongestJobs table
     PulsarLongestJobs.objects.all().delete()
     for destination_id, info_list in destination_dict.items():
+        try:
+            pulsar_instance = Pulsar.objects.get(name=destination_id)
+        except Pulsar.DoesNotExist:
+            continue
         if "longest" in info_list:
             for record in info_list["longest"]:
                 PulsarLongestJobs.objects.create(
-                        pulsar=destination_id,
+                        pulsar=pulsar_instance,
                         tool=record["tool"],
                         hours=record["hours"]
                     )
@@ -308,23 +330,31 @@ def update_live_dbs(self, destination_dict):
     # PulsarMostUsedTools table
     PulsarMostUsedTools.objects.all().delete()
     for destination_id, info_list in destination_dict.items():
+        try:
+            pulsar_instance = Pulsar.objects.get(name=destination_id)
+        except:
+            continue
         if "tools" in info_list:
             for record in info_list["tools"]:
                 PulsarMostUsedTools.objects.create(
-                        pulsar=destination_id,
+                        pulsar=pulsar_instance,
                         tool=record["tool"],
-                        hours=record["job_num"]
+                        job_num=record["job_num"]
                     )
 
     # PulsarActiveUsers table
     PulsarActiveUsers.objects.all().delete()
     for destination_id, info_list in destination_dict.items():
+        try:
+            pulsar_instance = Pulsar.objects.get(name=destination_id)
+        except:
+            continue
         if "user_jobs" in info_list:
             for record in info_list["tools"]:
                 PulsarActiveUsers.objects.create(
-                        pulsar=destination_id,
+                        pulsar=Pulsar.objects.get(name=destination_id),
                         user_id=record["userid"],
-                        hours=record["job_num"]
+                        job_num=record["job_num"]
                     )
 
     logger.info("Live dbs updated.")

@@ -1,6 +1,6 @@
 import random
 from django.core.management.base import BaseCommand
-from core.models import Pulsar
+from core.models import Pulsar, Galaxy
 
 # TODO take from conf file data, log with logger
 

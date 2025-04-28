@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render
-from core.models import Pulsar, History
+from core.models import Pulsar, History, Galaxy
 from collections import defaultdict
 from django.http import JsonResponse
 from django.db.models.functions import Trunc, RowNumber, TruncMinute, TruncHour, ExtractMinute, ExtractSecond, Now
@@ -15,7 +15,10 @@ logger = logging.getLogger('django')
 
 def index(request):
     logger.info(f'thread {threading.current_thread().name} is preparing index')
-    context = {'pulsars': list(Pulsar.objects.values('name', 'galaxy', 'latitude', 'longitude', 'queued_jobs', 'running_jobs', 'failed_jobs'))}
+    context = {
+        'pulsars_context': list(Pulsar.objects.values('name', 'galaxy', 'latitude', 'longitude', 'queued_jobs', 'running_jobs', 'failed_jobs', 'anonymous_jobs', 'unique_users')),
+        'galaxies_context': list(Galaxy.objects.values('name', 'latitude', 'longitude'))
+    }
     logger.info(f'thread {threading.current_thread().name} returns index')
     return render(request, 'index.html', context)
 
@@ -92,3 +95,11 @@ def play_history(request, history_range, history_window):
 
     logger.info(f'thread {threading.current_thread().name} returns play history')
     return JsonResponse(grouped_data, safe=False)
+
+def galaxies(request):
+    logger.info(f'thread {threading.current_thread().name} is preparing galaxies')
+    response = JsonResponse(
+        {'galaxies': list(Galaxy.objects.values('name', 'latitude', 'longitude'))}
+    )
+    logger.info(f'thread {threading.current_thread().name} returns galaxies')
+    return response
