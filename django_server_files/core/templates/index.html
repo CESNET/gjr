@@ -26,10 +26,8 @@
         L.Control.Watermark = L.Control.extend({
             onAdd: function(map) {
                 var img = L.DomUtil.create('img');
-
                 img.src = 'static/galaxy_project_logo_blue.png';
                 img.style.width = '100px';
-
                 return img;
             },
             onRemove: function(map) {
@@ -49,12 +47,12 @@
 
         let markerClusterGroup = L.markerClusterGroup().addTo(map);
 
-        for (let pulsar of pulsars) {
-            markerClusterGroup.addLayer(L.marker([pulsar.latitude, pulsar.longitude]));
-        }
+        // updateMarkersPie_realTime(markerClusterGroup)
+        // marker_updater = setInterval(() => updateMarkersPie_realTime(markerClusterGroup), 20000);
+        renderPulsars(pulsars, markerClusterGroup, map);
+        marker_updater = setInterval(() => updatePulsarData(pulsars), 20000);
 
-        updateMarkersPie_realTime(markerClusterGroup)
-        marker_updater = setInterval(() => updateMarkersPie_realTime(markerClusterGroup), 20000);
+        console.log(markerClusterGroup);
 
         document.getElementById('history_button').onclick = function() {
             updateMarkersPie_playHistory(markerClusterGroup);

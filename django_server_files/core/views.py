@@ -13,6 +13,7 @@ import threading
 
 logger = logging.getLogger('django')
 
+# TODO add to pulsars context also tables with foreign keys
 def index(request):
     logger.info(f'thread {threading.current_thread().name} is preparing index')
     context = {
@@ -22,14 +23,16 @@ def index(request):
     logger.info(f'thread {threading.current_thread().name} returns index')
     return render(request, 'index.html', context)
 
+# TODO add to pulsars context also tables with foreign keys
 def pulsar_positions(request):
     logger.info(f'thread {threading.current_thread().name} is preparing pulsar positions')
     response = JsonResponse(
-        {'pulsars': list(Pulsar.objects.values('name', 'galaxy', 'latitude', 'longitude', 'queued_jobs', 'running_jobs', 'failed_jobs'))}
+        {'pulsars': list(Pulsar.objects.values('name', 'galaxy', 'latitude', 'longitude', 'queued_jobs', 'running_jobs', 'failed_jobs', 'anonymous_jobs', 'unique_users'))}
     )
     logger.info(f'thread {threading.current_thread().name} returns pulsar positions')
     return response
 
+# TODO add possibilities with month and year and final from database
 def play_history(request, history_range, history_window):
     logger.info(f'thread {threading.current_thread().name} is preparing play history')
     now = timezone.now()
@@ -96,6 +99,7 @@ def play_history(request, history_range, history_window):
     logger.info(f'thread {threading.current_thread().name} returns play history')
     return JsonResponse(grouped_data, safe=False)
 
+# TODO send also other data like number of its pulsars etc.
 def galaxies(request):
     logger.info(f'thread {threading.current_thread().name} is preparing galaxies')
     response = JsonResponse(
