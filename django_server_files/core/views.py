@@ -15,37 +15,52 @@ import threading
 logger = logging.getLogger('django')
 
 def index(request):
+    """
+    Render the index page with context containing pulsar and galaxy data.
+    This function logs the request, retrieves and prepares the pulsar and galaxy data,
+    and renders the 'index.html' template with the context.
+    Args:
+        request: The HTTP request object.
+    Returns:
+        HttpResponse: Renders the 'index.html' page with the pulsars and galaxies context.
+    """
     logger.info(f'thread {threading.current_thread().name} is preparing index')
-
     # Use the helper function to populate pulsar data
     pulsars_context = get_pulsars_with_related_data()
-
     # Fetch and prepare galaxy context
     galaxies_context = list(Galaxy.objects.values('name', 'latitude', 'longitude'))
-
     context = {
         'pulsars_context': pulsars_context,
         'galaxies_context': galaxies_context,
     }
-
     logger.info(f'thread {threading.current_thread().name} returns index')
     return render(request, 'index.html', context)
 
 def pulsar_positions(request):
+    """
+    Provide the positions of pulsars as a JSON response.
+    This function logs the request, retrieves pulsar data, and returns it as a JSON response.
+    Args:
+        request: The HTTP request object.
+    Returns:
+        JsonResponse: A JSON response containing pulsar data.
+    """
     logger.info(f'thread {threading.current_thread().name} is preparing pulsar positions')
-
     # Use the helper function to get pulsar data
     pulsars_context = get_pulsars_with_related_data()
-
     response = JsonResponse({'pulsars': pulsars_context})
-
     logger.info(f'thread {threading.current_thread().name} returns pulsar positions')
     return response
 
 def get_pulsars_with_related_data():
-    # Retrieve all pulsars with related data using prefetch_related
+    """
+    Retrieve pulsars with their related data.
+    This function loads all pulsars along with their related jobs, tools, and users data,
+    and structures them into a dictionary format for rendering or response.
+    Returns:
+        list: A list of dictionaries, each containing data for a pulsar.
+    """
     pulsars = Pulsar.objects.prefetch_related('longestjobs', 'mostusedtools', 'activeusers')
-
     pulsars_context = []
     for pulsar in pulsars:
         pulsar_data = {
@@ -63,10 +78,20 @@ def get_pulsars_with_related_data():
             'active_users': list(pulsar.activeusers.values('user_id', 'job_num')),
         }
         pulsars_context.append(pulsar_data)
-
     return pulsars_context
 
 def play_history(request, history_range, history_window):
+    """
+    Provide historical job data for a range and window as a JSON response.
+    This function computes historical statistics over the specified range and window
+    (e.g., minute, hour, day) and returns this as a JSON response.
+    Args:
+        request: The HTTP request object.
+        history_range (int): The percentage of the window over which to return data.
+        history_window (str): The window type ('minute', 'hour', 'day', 'month', 'year').
+    Returns:
+        JsonResponse: A JSON response containing grouped historical job data.
+    """
     logger.info(f'thread {threading.current_thread().name} is preparing play history')
     now = timezone.now()
 
@@ -126,7 +151,6 @@ def play_history(request, history_range, history_window):
 
     logger.info(f'thread {threading.current_thread().name} took data from database for play history')
 
-    # Initialize a dictionary to group by timestamp
     grouped_data = defaultdict(list)
     seen = set()
     for history in history_objects:
@@ -145,15 +169,21 @@ def play_history(request, history_range, history_window):
                 }
                 timestamp_key = str(history['truncated'])
                 grouped_data[timestamp_key].append(entry)
-            # timestamp_data = grouped_data[str(history.timestamp.replace(microsecond=0))].append(entry)
         except Pulsar.DoesNotExist:
             logger.info("Pulsar from history: " + history['name'] + " does not exist anymore!")
 
     logger.info(f'thread {threading.current_thread().name} returns play history')
     return JsonResponse(grouped_data, safe=False)
 
-# TODO send also other data like number of its pulsars etc.
 def galaxies(request):
+    """
+    Provide a JSON response containing galaxy data.
+    This function retrieves galaxy data from the database and serves it as a JSON response.
+    Args:
+        request: The HTTP request object.
+    Returns:
+        JsonResponse: A JSON response containing the name, latitude, and longitude of galaxies.
+    """
     logger.info(f'thread {threading.current_thread().name} is preparing galaxies')
     response = JsonResponse(
         {'galaxies': list(Galaxy.objects.values('name', 'latitude', 'longitude'))}
@@ -161,57 +191,17 @@ def galaxies(request):
     logger.info(f'thread {threading.current_thread().name} returns galaxies')
     return response
 
-"""
-def compute_slowdowns_and_response(jobs):
-    mean_slowdown = []
-    bounded_slowdown = []
-    response_time = []
-
-    def calculate_mean_slowdown(jobs):
-        return sum([1.0 for job in jobs]) / max(1, len(jobs))
-
-    def calculate_bounded_slowdown(jobs):
-        return sum([1.0 for job in jobs]) / max(1, len(jobs))
-
-    def calculate_response_time(jobs):
-        return sum((job.end - job.start).total_seconds() for job in jobs) / max(1, len(jobs))
-
-    for job_group in jobs:
-        mean_slowdown.append(calculate_mean_slowdown(job_group))
-        bounded_slowdown.append(calculate_bounded_slowdown(job_group))
-        response_time.append(calculate_response_time(job_group))
-
-    return mean_slowdown, bounded_slowdown, response_time
-
 def scheduling_analysis(request, pulsar_name):
-    now = timezone.now()
-    ten_hours_ago = now - datetime.timedelta(hours=10)
-
-    recent_jobs = ScheduleStats.objects.filter(dest_id=pulsar_name, start__gte=ten_hours_ago)
-
-    interval_stats = []
-    for hour in range(0, 10):
-        hour_start = ten_hours_ago + datetime.timedelta(hours=hour)
-        hour_end = hour_start + datetime.timedelta(hours=1)
-        jobs_in_interval = recent_jobs.filter(start__gte=hour_start, start__lt=hour_end)
-
-        if jobs_in_interval.exists():
-            interval_stats.append(list(jobs_in_interval))
-
-    # Calculate the stats
-    mean_slowdown, bounded_slowdown, response_time = compute_slowdowns_and_response(interval_stats)
-
-    # Construct JSON response
-    data = {
-        "mean_slowdown": mean_slowdown,
-        "bounded_slowdown": bounded_slowdown,
-        "response_time": response_time
-    }
-
-    return JsonResponse(data, safe=False)
-"""
-
-def scheduling_analysis(request, pulsar_name):
+    """
+    Analyze scheduling metrics for a given pulsar over the past 30 days.
+    This function fetches scheduling statistics related to the specified pulsar and
+    returns various metrics including mean slowdown, bounded slowdown, and response time.
+    Args:
+        request: The HTTP request object.
+        pulsar_name (str): The name of the pulsar to analyze.
+    Returns:
+        JsonResponse: A JSON response containing scheduling analysis data.
+    """
     now = timezone.now()
     start = now - datetime.timedelta(days=30)
     stats = ScheduleStats.objects.filter(dest_id=pulsar_name, timestamp__gte=start)
