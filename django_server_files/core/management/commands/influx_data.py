@@ -65,7 +65,8 @@ class Command(BaseCommand):
         # Extract results into structured dictionary
         db_dict = influxdb_response_to_dict(results.raw)
 
-        update_pulsar_db(self, db_dict)
+        # for time optimalization moved into influxdb_response_to_dict function
+        # update_pulsar_db(self, db_dict)
         store_history_db(self, db_dict)
 
 # extract raw reponse from influxDB to dictionary and return dict
@@ -81,6 +82,11 @@ def influxdb_response_to_dict(response):
 
     # Check if the series field exists in the raw results
     if 'series' in response:
+        destination_info = {
+            "queued" : 0,
+            "running" : 0,
+            "failed" : 0
+        }
         for series in response['series']:
             destination_id = series['tags']['destination_id']
 
@@ -93,17 +99,25 @@ def influxdb_response_to_dict(response):
 
             # check if destination is already in dict
             if not destination_id in destination_dict:
-                destination_info = {
-                    "queued" : 0,
-                    "running" : 0,
-                    "failed" : 0
-                }
                 destination_dict[destination_id] = destination_info
 
             destination_dict[destination_id][state] += last_count
 
     else:
         logger.error("Bad influxDB response.")
+
+    for pulsar in Pulsar.objects.all():
+        if pulsar.name in destination_dict:
+            pulsar.queued_jobs = destination_dict[pulsar.name]["queued"]
+            pulsar.running_jobs = destination_dict[pulsar.name]["running"]
+            pulsar.failed_jobs = destination_dict[pulsar.name]["failed"]
+        else:
+            pulsar.queued_jobs = 0
+            pulsar.running_jobs = 0
+            pulsar.failed_jobs = 0
+            destination_dict[pulsar.name] = destination_info
+        # saving changed pulsar (TODO question is if I should not save all pulsars at once with some more specified command)
+        pulsar.save()
 
     logger.info("Data structure for influx data created.")
     return destination_dict

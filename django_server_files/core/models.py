@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 class Galaxy(models.Model):
     name = models.CharField(max_length=20)
@@ -69,9 +70,16 @@ class HistoryFinal(models.Model):
 
 # schedulling
 
+# class ScheduleStats(models.Model):
+#     job_id = models.CharField(max_length=20)
+#     dest_id = models.CharField(max_length=20)
+#     release = models.DateTimeField()
+#     start = models.DateTimeField()
+#     end = models.DateTimeField()
+
 class ScheduleStats(models.Model):
-    job_id = models.CharField(max_length=20)
     dest_id = models.CharField(max_length=20)
-    release = models.DateTimeField()
-    start = models.DateTimeField()
-    end = models.DateTimeField()
+    timestamp = models.DateTimeField(default=timezone.now)
+    mean_slowndown = models.FloatField(default=0.0)
+    bounded_slowndown = models.FloatField(default=0.0)
+    response_time = models.FloatField(default=0.0)

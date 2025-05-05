@@ -33,3 +33,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+function dividerUp() {
+    bottomDiv = document.getElementById('eval-graph');
+    console.log(bottomDiv.style.flexBasis);
+    if (bottomDiv.style.flexBasis == 0) {
+        bottomDiv.style.flexBasis = `25%`;
+    }
+}
+
+function dividerDown() {
+    bottomDiv = document.getElementById('eval-graph');
+    bottomDiv.style.flexBasis = ``;
+}

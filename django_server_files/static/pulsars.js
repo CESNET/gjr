@@ -1,59 +1,91 @@
 // global definition of marker updater which is shared
 let marker_updater;
-/*
+
 function renderPulsar(pulsar, markerFeatureGroup) {
-    var pulsar_job_sum = pulsar.queued_jobs + pulsar.running_jobs + pulsar.failed_jobs
-    var maximal_icon_size = 200;
-    var minimal_icon_size = 35;
-    var icon_size = pulsar_job_sum + minimal_icon_size > maximal_icon_size ? maximal_icon_size : pulsar_job_sum + minimal_icon_size;
-    var minichart;
-    if (pulsar_job_sum > 0) {
+    const pulsarJobTotal = pulsar.queued_jobs + pulsar.running_jobs + pulsar.failed_jobs;
+    const iconSize = Math.min(200, pulsarJobTotal + 35); // Maintain max size constraint
+    let minichart;
+    if (pulsarJobTotal > 0) {
         minichart = L.minichart([pulsar.latitude, pulsar.longitude], {
             type: "pie",
             data: [pulsar.queued_jobs, pulsar.running_jobs, pulsar.failed_jobs],
             maxValues: "auto",
             colors: ["rgba(252, 163, 17, 0.5)", "rgba(103, 148, 54, 0.5)", "rgba(214, 40, 40, 0.5)"],
-            width: icon_size,
+            width: iconSize,
             labels: "auto",
-            transitionTime: 2
+            transitionTime: 1
         });
     } else {
         minichart = L.marker([pulsar.latitude, pulsar.longitude], {
             icon: L.divIcon({
                 className: 'runner_icon runner_icon_empty',
-                html: '<b>' + pulsar_job_sum + '</b>',
-                iconSize: [icon_size, icon_size]
+                html: `<b>${pulsarJobTotal}</b>`,
+                iconSize: [iconSize, iconSize]
             })
         });
     }
-    minichart.addTo(markerFeatureGroup);
-    minichart.bindTooltip(L.tooltip([pulsar.latitude, pulsar.longitude], {
-        content: `<h3><b>${pulsar.name}</b></h3>
-                    queued jobs: <b>${pulsar.queued_jobs}</b><br>
-                    running jobs: <b>${pulsar.running_jobs}</b><br>
-                    failed jobs in last hour: <b>${pulsar.failed_jobs}</b>`,
-        offset: L.point((icon_size / 2), -(icon_size / 2)),
-        direction: 'right'
-    }));
-    // event listeners
-    if (pulsar_job_sum > 0) {
-        minichart.on('mouseover', function () {
+    var longest_list = "";
+    pulsar.longest_jobs.forEach(job => {
+            longest_list += `<li>Job running tool <b>${job.tool}</b> for <b>${job.hours}</b> hours</li>`
+    });
+    var tools_list = "";
+    pulsar.most_used_tools.forEach(tool => {
+            tools_list += `<li><b>${tool.tool}</b> was computed by <b>${tool.job_num}</b> jobs</li>`
+    });
+    var users_list = "";
+    pulsar.active_users.forEach(user => {
+            users_list += `<li>User ${user.user_id} ran ${user.job_num} jobs in last hour on this machine.</li>`
+    });
+    const tooltipContent = `
+        <h3><b>${pulsar.name}</b></h3>
+        Queued jobs: <b>${pulsar.queued_jobs}</b><br>
+        Running jobs: <b>${pulsar.running_jobs}</b><br>
+        Failed jobs in last hour: <b>${pulsar.failed_jobs}</b><br>
+        Anonymous jobs in last hour: <b>${pulsar.anonymous_jobs}</b><br>
+        Unique users in last hour: <b>${pulsar.unique_users}</b><br>
+        <h5>Longest running jobs:</h5>
+        ${longest_list}
+        <h5>Most used tools:</h5>
+        ${tools_list}
+        <h5>Most active users:</h5>
+        ${users_list}
+    `;
+    const tooltip = L.tooltip({
+        content: tooltipContent,
+        offset: L.point(iconSize / 2, -iconSize / 2),
+        direction: 'right',
+        className: 'leaflet-tooltip-own'
+    });
+    minichart.bindTooltip(tooltip);
+    if (pulsarJobTotal > 0) {
+        minichart.on('mouseover', function() {
             minichart.setOptions({
-                width: icon_size * 1.2,
-                colors: ["rgba(255, 148, 42, 0.8)", "rgba(62, 164, 16, 0.8)", "rgba(255, 0, 0, 0.8)"],
+                width: iconSize * 1.2,
+                colors: ["rgba(252, 163, 17, 0.8)", "rgba(103, 148, 54, 0.8)", "rgba(214, 40, 40, 0.8)"],
                 pane: 'tooltipPane'
             });
         });
-        minichart.on('mouseout', function () {
+        minichart.on('mouseout', function() {
             minichart.setOptions({
-                width: icon_size,
-                colors: ["rgba(255, 148, 42, 0.5)", "rgba(62, 164, 16, 0.5)", "rgba(255, 0, 0, 0.5)"],
+                width: iconSize,
+                colors: ["rgba(252, 163, 17, 0.5)", "rgba(103, 148, 54, 0.5)", "rgba(214, 40, 40, 0.5)"],
                 pane: 'overlayPane'
             });
         });
     }
+    minichart.on("click", function() {
+        graph = document.getElementById("eval_graph_svg");
+        if (graph) {
+            graph.remove();
+        }
+        dividerUp();
+        document.getElementById("eval-pulsar-name").innerHTML = pulsar.name;
+        addEvalGraph(pulsar.name);
+    });
+    pulsar.chart = minichart;
+    pulsar.tooltip = tooltip;
+    minichart.addTo(markerFeatureGroup);
 }
-*/
 
 function updateMarkersPie_realTime(markerFeatureGroup) {
     // Send a request to the server to get the new job numbers
@@ -62,59 +94,6 @@ function updateMarkersPie_realTime(markerFeatureGroup) {
         data.pulsars.forEach(pulsar => {
             renderPulsar(pulsar, markerFeatureGroup);
         });
-    });
-}
-
-function updatePulsarData(pulsars) {
-    getPulsarData(pulsars);
-    setPulsarData(pulsars);
-}
-
-function getPulsarData(pulsars) {
-    // Send a request to the server to get the new job numbers
-    fetch('/pulsar-positions/')
-        .then(response => response.json())
-        .then(data => {
-            // Assign the parsed data to the pulsars variable
-            pulsars = data;
-        })
-        .catch(error => {
-            console.error('Error fetching pulsar data:', error);
-        });
-}
-
-/*
-function setPulsarData(pulsars, map) {
-    pulsars.forEach(pulsar => {
-        console.log(map, pulsar.chart, pulsar.tooltip);
-        pulsar.chart.setOptions({
-            data: [pulsar.queued_jobs, pulsar.running_jobs, pulsar.failed_jobs]
-        })
-        pulsar.tooltip.setContent(
-            `<h3><b>${pulsar.name}</b></h3>
-            Queued jobs: <b>${pulsar.queued_jobs}</b><br>
-            Running jobs: <b>${pulsar.running_jobs}</b><br>
-            Failed jobs in last hour: <b>${pulsar.failed_jobs}</b><br>
-            Anonymous jobs: <b${pulsar.anonymous_jobs}</b><br>
-            Unique users: <b${pulsar.unique_users}</b><br>`
-        );
-    });
-}*/
-
-function setPulsarData(pulsars) {
-    pulsars.forEach(pulsar => {
-        console.log(pulsar.queued_jobs, pulsar.running_jobs, pulsar.failed_jobs, pulsar.chart);
-        pulsar.chart.setOptions({
-            data: [pulsar.queued_jobs, pulsar.running_jobs, pulsar.failed_jobs]
-        });
-        pulsar.tooltip.setContent(`
-            <h3><b>${pulsar.name}</b></h3>
-            Queued jobs: <b>${pulsar.queued_jobs}</b><br>
-            Running jobs: <b>${pulsar.running_jobs}</b><br>
-            Failed jobs in last hour: <b>${pulsar.failed_jobs}</b><br>
-            Anonymous jobs: <b>${pulsar.anonymous_jobs}</b><br>
-            Unique users: <b>${pulsar.unique_users}</b><br>
-        `);
     });
 }
 

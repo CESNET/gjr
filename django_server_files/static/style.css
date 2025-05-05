@@ -31,7 +31,7 @@ html, body {
     margin: 0px;
     padding: 0px;
     z-index: 0;
-    flex-basis: 75%;
+    flex-basis: 100%;
 }
 
 #eval-graph {
@@ -39,7 +39,7 @@ html, body {
     margin: 0px;
     padding: 0px;
     z-index: 800;
-    flex-basis: 25%;
+    flex-basis: 0%;
     background: #555;
 }
 
@@ -50,6 +50,7 @@ html, body {
     font-size: 13px;
     font-family: 'sans-serif';
     font-weight: bold;
+    cursor: pointer;
 }
 
 .leaflet-touch .leaflet-control-layers-toggle {
@@ -88,6 +89,7 @@ html, body {
     background: rgba(240, 240, 240, 1);
     margin-bottom: 5px;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .history_button:hover {
@@ -98,6 +100,7 @@ html, body {
 
 .history_range {
     width: 270px;
+    cursor: pointer;
 }
 
 .live_button {
@@ -109,12 +112,41 @@ html, body {
     display: none;
     color: red;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .live_button:hover {
     border: 2px solid #555;
     background: #555;
     color: white;
+}
+
+.leaflet-tooltip-left:before {
+    right: 0;
+    margin-right: -12px;
+    border-left-color: rgba(0, 0, 0, 0.4);
+}
+
+.leaflet-tooltip-right:before {
+    left: 0;
+    margin-left: -12px;
+    border-right-color: rgba(0, 0, 0, 0.4);
+}
+
+.leaflet-tooltip-own {
+    position: absolute;
+    padding: 4px;
+    background-color: rgba(240, 240, 240, 1);
+    border: 2px solid #555;
+    color: #000;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    border-radius: 6px;
 }
 
 #history_window {
@@ -125,6 +157,7 @@ html, body {
     height: 30px;
     background: rgba(240, 240, 240, 1);
     margin-bottom: 5px;
+    cursor: pointer;
 }
 
 #history_window:hover {
@@ -176,8 +209,8 @@ html, body {
     height: 82px;
     padding: 2px;
     font: 12px sans-serif;
-    background: lightsteelblue;
-    border: 0px;
+    background-color: rgba(240, 240, 240, 1);
     border-radius: 8px;
     pointer-events: none;
+    border: 2px solid #555;
 }

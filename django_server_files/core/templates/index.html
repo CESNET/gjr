@@ -5,7 +5,7 @@
 <div id="map"></div>
 <div id="divider"></div>
 <div id="eval-graph">
-    <span id="eval-pulsar-name">Pulsar name<span>
+    <span id="eval-pulsar-name" onclick="dividerDown();">Pulsar name<span>
 </div>
 
 {{ pulsars_context|json_script:"pulsar-json" }}
@@ -19,9 +19,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         let map = createMap([50, 8], 5);
         addLegend(map);
-
-        // TODO this will not be here, it will be shown only once user click on specifick pulsar with specific pulsar name as a input
-        addEvalGraph([data1, data2, data3]);
 
         L.Control.Watermark = L.Control.extend({
             onAdd: function(map) {
@@ -47,12 +44,10 @@
 
         let markerClusterGroup = L.markerClusterGroup().addTo(map);
 
-        // updateMarkersPie_realTime(markerClusterGroup)
-        // marker_updater = setInterval(() => updateMarkersPie_realTime(markerClusterGroup), 20000);
-        renderPulsars(pulsars, markerClusterGroup, map);
-        marker_updater = setInterval(() => updatePulsarData(pulsars), 20000);
-
-        console.log(markerClusterGroup);
+        updateMarkersPie_realTime(markerClusterGroup)
+        marker_updater = setInterval(() => updateMarkersPie_realTime(markerClusterGroup), 20000);
+        // renderPulsars(pulsars, markerClusterGroup);
+        // marker_updater = setInterval(() => updatePulsarData(pulsars, markerClusterGroup), 2000);
 
         document.getElementById('history_button').onclick = function() {
             updateMarkersPie_playHistory(markerClusterGroup);

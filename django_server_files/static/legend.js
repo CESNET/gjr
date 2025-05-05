@@ -49,6 +49,8 @@ function generateLegendHTML2() {
             <option value="minute">last 10 minutes (average per minute)</option>
             <option value="hour">last hour (average per minute)</option>
             <option value="day">last day (average per hour)</option>
+            <option value="day">last month (average per day)</option>
+            <option value="day">last year (average per month)</option>
         </select>
         <button type="button" id="history_button" class="history_button" name="play_history">Play history</button>
         <input type="range" id="history_range" class="history_range" name="history_range" min="0" max="100" value="0"></input>
@@ -129,7 +131,7 @@ function createArcs(arc, path) {
  */
 function addLabelsAndLines(svg, radius) {
     var labels = [
-        { text: "Anonymous Jobs", color: "rgba(100, 100, 100)", offset: 0 },
+        // { text: "Anonymous Jobs", color: "rgba(100, 100, 100)", offset: 0 },
         { text: "Failed Jobs", color: "rgba(255, 0, 0)", offset: Math.PI / 6 },
         { text: "Running Jobs", color: "rgba(62, 164, 16)", offset: 0 },
         { text: "Queued Jobs", color: "rgba(255, 148, 42)", offset: -1 * Math.PI / 6 }
@@ -154,14 +156,14 @@ function addLabelsAndLines(svg, radius) {
             .style("font-size", "12px")
             .style("font-weight", "bold");
     });
-    svg.append("circle")
-        .attr("cx", radius * Math.cos(Math.PI / 6) - 18)
-        .attr("cy", -radius * Math.sin(Math.PI / 6) - 5)
-        .attr("r", 20)
-        .style("fill", "rgba(100, 100, 100)");
-    svg.append("title")
-        .attr("id", "anonymousTooltip")
-        .text("Anonymous Jobs");
+    // svg.append("circle")
+    //     .attr("cx", radius * Math.cos(Math.PI / 6) - 18)
+    //     .attr("cy", -radius * Math.sin(Math.PI / 6) - 5)
+    //     .attr("r", 20)
+    //     .style("fill", "rgba(100, 100, 100)");
+    // svg.append("title")
+    //     .attr("id", "anonymousTooltip")
+    //     .text("Anonymous Jobs");
 }
 
 /**
@@ -172,7 +174,7 @@ function addLabelsAndLines(svg, radius) {
  */
 function choose_coordinates_for_label_x1(label) {
     switch (label) {
-        case "Anonymous Jobs": return 45;
+        // case "Anonymous Jobs": return 45;
         case "Queued Jobs": return -20;
         case "Running Jobs": return 45;
         case "Failed Jobs": return -15;
@@ -187,9 +189,9 @@ function choose_coordinates_for_label_x1(label) {
  */
 function choose_coordinates_for_label_y1(label) {
     switch (label) {
-        case "Anonymous Jobs": return -45;
+        // case "Anonymous Jobs": return -45;
         case "Queued Jobs": return 20;
-        case "Running Jobs": return 15;
-        case "Failed Jobs": return -15;
+        case "Running Jobs": return 0;
+        case "Failed Jobs": return -25;
     }
 }
