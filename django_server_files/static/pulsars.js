@@ -113,7 +113,7 @@ function playHistory_oneStep(data, keys, history_moment, history_size, range_siz
     // change range history and label due to rendered data entries
     document.getElementById("time_label").innerHTML = `${timestamp}`;
     document.getElementById("history_range").value = Math.round(history_moment.index / (history_size / range_size));
-    markerClusterGroup.clearLayers(); // TODO: CLEAR LAYERS WITHOUT ZEROES
+    markerClusterGroup.clearLayers();
     arrayOfPulsars.forEach(pulsar => {
         renderPulsar(pulsar, markerClusterGroup);
     });

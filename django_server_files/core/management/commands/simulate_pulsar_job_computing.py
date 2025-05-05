@@ -31,7 +31,7 @@ class Command(BaseCommand):
 
     def inicialize_simulation(self):
         for pulsar in Pulsar.objects.all():
-                pulsar.queued_jobs = random.randint(30, 70)
-                pulsar.running_jobs = random.randint(15, 30)
-                pulsar.failed_jobs = random.randint(8, 15)
-                pulsar.save()
+            pulsar.queued_jobs = random.randint(30, 70)
+            pulsar.running_jobs = random.randint(15, 30)
+            pulsar.failed_jobs = random.randint(8, 15)
+            pulsar.save()

@@ -4,7 +4,7 @@
  */
 function initializeSVG() {
     const container = document.getElementById("eval-graph");
-    const margin = { top: 5, right: 10, bottom: 45, left: 25 };
+    const margin = { top: 5, right: 10, bottom: 45, left: 40 };
     const width = container.clientWidth - margin.left - margin.right;
     const height = container.clientHeight - margin.top - margin.bottom;
     const svg = d3.select("#eval-graph")
@@ -28,9 +28,16 @@ function initializeSVG() {
 function createScales(data, width, height) {
     const x = d3.scaleTime()
         .domain(d3.extent(data[0], d => d.date))
-        .range([0, width]);    const y = d3.scaleLinear()
-        .domain([0, d3.max(data.flat(), d => d.value)])
-        .range([height, 0]);
+        .range([0, width]);
+    // Use d3.scaleLog to create a logarithmic scale for the y-axis
+    const y = d3.scaleLog()
+        .domain([
+            0.1, // Ensure the minimum is greater than zero for log scale
+            d3.max(data.flat(), d => d.value) || 1 // Avoid log(0) and handle empty data gracefully
+        ])
+        .range([height, 0])
+        .clamp(true); // Optionally, clamp to avoid negative values that are outside of the domain
+
     return { x, y };
 }
 
@@ -46,7 +53,9 @@ function appendAxes(svg, x, y, height) {
         .attr("transform", `translate(0,${height})`)
         .call(d3.axisBottom(x).ticks(5));
     svg.append("g")
-        .call(d3.axisLeft(y));
+        .call(d3.axisLeft(y)
+            .ticks(5, "~s") // Use a format suitable for log scales
+        );
 }
 
 /**
@@ -160,67 +169,46 @@ function drawLegend(svg, width, labels, colors) {
         .text(d => d);
 }
 
-// Sample data
-const data1 = [
-    { date: new Date(2023, 0, 1), value: Math.random() },
-    { date: new Date(2023, 1, 1), value: Math.random() },
-    { date: new Date(2023, 2, 1), value: Math.random() },
-    { date: new Date(2023, 3, 1), value: Math.random() },
-    { date: new Date(2023, 4, 1), value: Math.random() },
-    { date: new Date(2023, 5, 1), value: Math.random() },
-    { date: new Date(2023, 6, 1), value: Math.random() },
-    { date: new Date(2023, 7, 1), value: Math.random() },
-    { date: new Date(2023, 8, 1), value: Math.random() },
-    { date: new Date(2023, 9, 1), value: Math.random() },
-    { date: new Date(2023, 10, 1), value: Math.random() },
-    { date: new Date(2023, 11, 1), value: Math.random() }
-];
-const data2 = [
-    { date: new Date(2023, 0, 1), value: Math.random() },
-    { date: new Date(2023, 1, 1), value: Math.random() },
-    { date: new Date(2023, 2, 1), value: Math.random() },
-    { date: new Date(2023, 3, 1), value: Math.random() },
-    { date: new Date(2023, 4, 1), value: Math.random() },
-    { date: new Date(2023, 5, 1), value: Math.random() },
-    { date: new Date(2023, 6, 1), value: Math.random() },
-    { date: new Date(2023, 7, 1), value: Math.random() },
-    { date: new Date(2023, 8, 1), value: Math.random() },
-    { date: new Date(2023, 9, 1), value: Math.random() },
-    { date: new Date(2023, 10, 1), value: Math.random() },
-    { date: new Date(2023, 11, 1), value: Math.random() }
-];
-const data3 = [
-    { date: new Date(2023, 0, 1), value: Math.random() },
-    { date: new Date(2023, 1, 1), value: Math.random() },
-    { date: new Date(2023, 2, 1), value: Math.random() },
-    { date: new Date(2023, 3, 1), value: Math.random() },
-    { date: new Date(2023, 4, 1), value: Math.random() },
-    { date: new Date(2023, 5, 1), value: Math.random() },
-    { date: new Date(2023, 6, 1), value: Math.random() },
-    { date: new Date(2023, 7, 1), value: Math.random() },
-    { date: new Date(2023, 8, 1), value: Math.random() },
-    { date: new Date(2023, 9, 1), value: Math.random() },
-    { date: new Date(2023, 10, 1), value: Math.random() },
-    { date: new Date(2023, 11, 1), value: Math.random() }
-];
-
 /**
  * Main function to add the evaluation graph to the page.
  * @param {Array} dataSets - Array of data sets to be plotted.
  */
 function addEvalGraph(pulsar_name) {
     var url = `/scheduling-analysis/${pulsar_name}/`;
-    var dataSets = [data1, data2, data3]
+    var dataSets = []
     fetch(url, { method: "GET" }).then(response => response.json()).then(data => {
+        const convertDatesInDataset = dataset => {
+            if (dataset) {
+                dataset.forEach(entry => {
+                    entry.date = new Date(entry.date);
+                });
+            }
+        };
+        convertDatesInDataset(data['mean_slowdown']);
+        convertDatesInDataset(data['bounded_slowdown']);
+        convertDatesInDataset(data['response_time']);
         dataSets = [data['mean_slowdown'], data['bounded_slowdown'], data['response_time']];
+        const isDataEmpty = dataSets.every(dataSet => !dataSet || dataSet.length === 0);
+        const { svg, width, height } = initializeSVG();
+        if (isDataEmpty) {
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", height / 2)
+                .attr("font-family", "sans-serif")
+                .attr("text-anchor", "middle")
+                .attr("dominant-baseline", "central")
+                .style("font-size", "40px")
+                .style("fill", "darkgray")
+                .text("No Data");
+        } else {
+            const labels = ["Mean Slowdown", "Bounded Slowdown", "Response Time"];
+            const colors = ["rgb(42, 157, 143)", "rgb(165, 56, 96)", "rgb(114, 9, 183)"];
+            const { x, y } = createScales(dataSets, width, height);
+            appendAxes(svg, x, y, height);
+            addGridLines(svg, x, y, width, height);
+            drawLines(svg, dataSets, x, y, colors);
+            addInteractivity(svg, x, y);
+            drawLegend(svg, width, labels, colors);
+        }
     });
-    const labels = ["Mean Slowdown", "Bounded Slowdown", "Response Time"];
-    const colors = ["rgb(42, 157, 143)", "	rgb(165, 56, 96)", "rgb(114, 9, 183)"];
-    const { svg, width, height } = initializeSVG();
-    const { x, y } = createScales(dataSets, width, height);
-    appendAxes(svg, x, y, height);
-    addGridLines(svg, x, y, width, height);
-    drawLines(svg, dataSets, x, y, colors);
-    addInteractivity(svg, x, y);
-    drawLegend(svg, width, labels, colors);
 }

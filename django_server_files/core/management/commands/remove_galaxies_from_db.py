@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from core.models import Pulsar
+from core.models import Galaxy
 
 class Command(BaseCommand):
     help = 'Removes galaxy objects from the database'
@@ -8,5 +8,5 @@ class Command(BaseCommand):
         remove_galaxies()
 
 def remove_galaxies():
-    Galaxy.objects.delete()
+    Galaxy.objects.all().delete()
     print(f"galaxies were removed")

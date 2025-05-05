@@ -5,9 +5,8 @@ class Command(BaseCommand):
     help = 'Removes specific pulsars objects from the database'
 
     def handle(self, *args, **options):
-        remove_concrete_pulsars()
-
+        remove_pulsars()
 
 def remove_pulsars():
-    Pulsar.objects.delete()
+    Pulsar.objects.all().delete()
     print(f"pulsars were removed")

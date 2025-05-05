@@ -161,6 +161,7 @@ def galaxies(request):
     logger.info(f'thread {threading.current_thread().name} returns galaxies')
     return response
 
+"""
 def compute_slowdowns_and_response(jobs):
     mean_slowdown = []
     bounded_slowdown = []
@@ -182,7 +183,6 @@ def compute_slowdowns_and_response(jobs):
 
     return mean_slowdown, bounded_slowdown, response_time
 
-"""
 def scheduling_analysis(request, pulsar_name):
     now = timezone.now()
     ten_hours_ago = now - datetime.timedelta(hours=10)
@@ -211,34 +211,27 @@ def scheduling_analysis(request, pulsar_name):
     return JsonResponse(data, safe=False)
 """
 
-
 def scheduling_analysis(request, pulsar_name):
     now = timezone.now()
-    start = now - datetime.timedelta(days=30)  # Corrected 'day' to 'days'
-
-    # Filter records for the specified pulsar_name and within the last 30 days
+    start = now - datetime.timedelta(days=30)
     stats = ScheduleStats.objects.filter(dest_id=pulsar_name, timestamp__gte=start)
-
-    # Construct the JSON response
     data = {
         "mean_slowdown": [],
         "bounded_slowdown": [],
         "response_time": []
     }
-
     for interval in stats:
-        interval_timestamp = interval['timestamp']
+        interval_timestamp = interval.timestamp
         data["mean_slowdown"].append({
             "date": interval_timestamp,
-            "value": interval['mean_slowdown']
+            "value": interval.mean_slowndown
         })
         data["bounded_slowdown"].append({
             "date": interval_timestamp,
-            "value": interval['bounded_slowdown']
+            "value": interval.bounded_slowndown
         })
         data["response_time"].append({
             "date": interval_timestamp,
-            "value": interval['response_time']
+            "value": interval.response_time
         })
-
     return JsonResponse(data, safe=False)

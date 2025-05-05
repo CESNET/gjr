@@ -3,6 +3,9 @@ from django.utils import timezone
 from datetime import timedelta, datetime
 from pulsars.models import HistoryYear, HistoryFinal
 from django.db.models import Avg
+import logging
+
+logger = logging.getLogger('django')
 
 class Command(BaseCommand):
     help = 'Aggregate yearly history data into final history data and clean up old records in HistoryYear.'
@@ -10,10 +13,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         current_time = timezone.now()
         one_year_ago = current_time - timedelta(days=365)
-
-        # Aggregate data from HistoryYear to HistoryFinal
-        self.stdout.write("Aggregating yearly data into monthly averages for final storage...")
-
+        logger.info("Aggregating yearly data into monthly averages for final storage...")
         # Extract month and year from timestamp
         yearly_data = (
             HistoryYear.objects.filter(timestamp__gte=one_year_ago)
@@ -25,7 +25,6 @@ class Command(BaseCommand):
                 failed_jobs_month_avg=Avg('failed_jobs_day_avg')
             )
         )
-
         for data in yearly_data:
             # Generate appropriate timestamp for each month
             month_year = datetime(data['year'], data['month'], 1)
@@ -38,9 +37,6 @@ class Command(BaseCommand):
                 failed_jobs_month_avg=data['failed_jobs_month_avg'],
                 timestamp=month_year
             )
-
-        # Delete old records in HistoryYear
-        self.stdout.write("Deleting old records from HistoryYear...")
+        logger.info("Deleting old records from HistoryYear...")
         HistoryYear.objects.filter(timestamp__lt=one_year_ago).delete()
-
-        self.stdout.write(self.style.SUCCESS("Successfully aggregated yearly data into monthly averages and cleaned up old records."))
+        logger.info("Successfully aggregated yearly data into monthly averages and cleaned up old records.")

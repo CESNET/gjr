@@ -1,2 +1,2 @@
-name;latitude;longitude
+name;lat;long
 usegalaxy.eu;48.012669109891426;7.835061597283835
