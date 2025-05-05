@@ -34,7 +34,7 @@ class PulsarActiveUsers(models.Model):
     user_id = models.CharField(max_length=50)
     job_num = models.IntegerField()
 
-# history, TODO: put into different sqlite dbs
+# history
 
 class History(models.Model):
     name = models.CharField(max_length=20)
