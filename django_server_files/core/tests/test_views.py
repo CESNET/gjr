@@ -56,25 +56,25 @@ class ViewsTest(TestCase):
         self.assertContains(response, "Milky Way")
 
     def test_pulsar_positions_view(self):
-        response = self.client.get(reverse('pulsar_positions'))
+        response = self.client.get(reverse('pulsar-positions/'))
         self.assertEqual(response.status_code, 200)
         response_json = response.json()
         self.assertIn('PulsarZ', [p['name'] for p in response_json['pulsars']])
 
     def test_play_history_view(self):
-        response = self.client.get(reverse('play_history', args=[50, 'minute']))
+        response = self.client.get(reverse('play-history/', args=[50, 'minute']))
         self.assertEqual(response.status_code, 200)
         response_json = response.json()
         self.assertTrue(isinstance(response_json, dict))
 
     def test_galaxies_view(self):
-        response = self.client.get(reverse('galaxies'))
+        response = self.client.get(reverse('galaxies/'))
         self.assertEqual(response.status_code, 200)
         response_json = response.json()
         self.assertIn('Milky Way', [g['name'] for g in response_json['galaxies']])
 
     def test_scheduling_analysis_view(self):
-        response = self.client.get(reverse('scheduling_analysis', args=["PulsarZ"]))
+        response = self.client.get(reverse('scheduling-analysis/', args=["PulsarZ"]))
         self.assertEqual(response.status_code, 200)
         response_json = response.json()
         self.assertIn('mean_slowdown', response_json)

@@ -45,7 +45,7 @@ class PulsarModelTest(TestCase):
 class PulsarLongestJobsModelTest(TestCase):
 
     def test_longest_job_assignment(self):
-        pulsar = Pulsar.objects.create(name='PulsarY', galaxy='Milky Way')
+        pulsar = Pulsar.objects.create(name='PulsarY', galaxy='Milky Way', latitude=1.11, longitude=2.22)
         longest_job = PulsarLongestJobs.objects.create(pulsar=pulsar, tool='ToolA', hours=5)
         self.assertEqual(longest_job.pulsar, pulsar)
         self.assertEqual(longest_job.tool, 'ToolA')
@@ -54,7 +54,7 @@ class PulsarLongestJobsModelTest(TestCase):
 class PulsarMostUsedToolsModelTest(TestCase):
 
     def test_most_used_tool_assignment(self):
-        pulsar = Pulsar.objects.create(name='PulsarY', galaxy='Milky Way')
+        pulsar = Pulsar.objects.create(name='PulsarY', galaxy='Milky Way', latitude=1.11, longitude=2.22)
         most_used_tool = PulsarMostUsedTools.objects.create(pulsar=pulsar, tool='ToolB', job_num=15)
         self.assertEqual(most_used_tool.pulsar, pulsar)
         self.assertEqual(most_used_tool.tool, 'ToolB')
@@ -63,7 +63,7 @@ class PulsarMostUsedToolsModelTest(TestCase):
 class PulsarActiveUsersModelTest(TestCase):
 
     def test_active_users_assignment(self):
-        pulsar = Pulsar.objects.create(name='PulsarZ', galaxy='Milky Way')
+        pulsar = Pulsar.objects.create(name='PulsarZ', galaxy='Milky Way', latitude=1.11, longitude=2.22)
         active_user = PulsarActiveUsers.objects.create(pulsar=pulsar, user_id='User123', job_num=6)
         self.assertEqual(active_user.pulsar, pulsar)
         self.assertEqual(active_user.user_id, 'User123')
