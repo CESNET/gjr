@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.db.models import Avg
 from django.utils import timezone
-from myapp.models import History, HistoryMonth, HistoryYear, HistoryFinal
+from core.models import History, HistoryMonth, HistoryYear, HistoryFinal
 from django.db.models.functions import TruncHour, TruncDay, TruncMonth
 
 class Command(BaseCommand):
