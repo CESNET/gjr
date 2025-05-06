@@ -54,8 +54,7 @@ class Command(BaseCommand):
         )
         logger.info("InfluxDB response successfully stored.")
         db_dict = influxdb_response_to_dict(results.raw)
-        # for time optimalization moved into influxdb_response_to_dict function
-        # update_pulsar_db(self, db_dict)
+        update_pulsar_db(self, db_dict)
         store_history_db(self, db_dict)
 
 # extract raw reponse from influxDB to dictionary and return dict
@@ -70,11 +69,6 @@ def influxdb_response_to_dict(response):
     destination_dict = {}
 
     if 'series' in response:
-        destination_info = {
-            "queued" : 0,
-            "running" : 0,
-            "failed" : 0
-        }
         for series in response['series']:
             destination_id = series['tags']['destination_id']
 
@@ -86,23 +80,15 @@ def influxdb_response_to_dict(response):
             last_count = series['values'][0][1]
 
             if not destination_id in destination_dict:
-                destination_dict[destination_id] = destination_info
+                destination_dict[destination_id] = {
+                    "queued": 0,
+                    "running": 0,
+                    "failed": 0
+                }
 
             destination_dict[destination_id][state] += last_count
     else:
         logger.error("Bad influxDB response.")
-
-    for pulsar in Pulsar.objects.all():
-        if pulsar.name in destination_dict:
-            pulsar.queued_jobs = destination_dict[pulsar.name]["queued"]
-            pulsar.running_jobs = destination_dict[pulsar.name]["running"]
-            pulsar.failed_jobs = destination_dict[pulsar.name]["failed"]
-        else:
-            pulsar.queued_jobs = 0
-            pulsar.running_jobs = 0
-            pulsar.failed_jobs = 0
-            destination_dict[pulsar.name] = destination_info
-        pulsar.save()
 
     logger.info("Data structure for influx data created.")
     return destination_dict
@@ -119,6 +105,11 @@ def update_pulsar_db(self, destination_dict):
             pulsar.queued_jobs = 0
             pulsar.running_jobs = 0
             pulsar.failed_jobs = 0
+            destination_dict[pulsar.name] = {
+                "queued": 0,
+                "running": 0,
+                "failed": 0
+            }
         pulsar.save()
     logger.info("Pulsar db updated.")
 
