@@ -126,7 +126,7 @@ def store_history_db(self, destination_dict):
                 name=destination_id,
                 galaxy="usegalaxy.eu",
                 queued_jobs=destination_dict[destination_id]["queued"],
-                running_jobs=destination_dict[destination_id]["running"]
+                running_jobs=destination_dict[destination_id]["running"],
                 timestamp=current_time
             )
     logger.info("History db updated.")
