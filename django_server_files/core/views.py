@@ -136,7 +136,7 @@ def play_history(request, history_range, history_window):
             average_failed_jobs=Avg('failed_jobs')
         )
     elif history_window == "year":
-        history_objects = History.objects.filter(
+        history_objects = HistoryYear.objects.filter(
             timestamp__gte=(now - timedelta(days=365) + timedelta(minutes=int((history_range / 100) * 365 * 24 * 60)))
         ).annotate(
             truncated=TruncMonth('timestamp')
