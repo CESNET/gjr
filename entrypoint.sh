@@ -2,6 +2,9 @@
 
 # Run database migrations
 python /app/django_server_files/manage.py migrate
+python /app/django_server_files/manage.py influx_data
+python /app/django_server_files/manage.py influx_data_hour
+python /app/django_server_files/manage.py influx_data_4hours
 
 # Create pulsars
 # python /app/django_server_files/manage.py create_pulsars

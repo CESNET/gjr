@@ -39,33 +39,33 @@ class PulsarActiveUsers(models.Model):
 class History(models.Model):
     name = models.CharField(max_length=20)
     galaxy = models.CharField(max_length=20)
-    queued_jobs = models.IntegerField()
-    running_jobs = models.IntegerField()
-    failed_jobs = models.IntegerField()
+    queued_jobs = models.IntegerField(default=0)
+    running_jobs = models.IntegerField(default=0)
+    failed_jobs = models.IntegerField(default=0)
     timestamp = models.DateTimeField()
 
 class HistoryMonth(models.Model):
     name = models.CharField(max_length=20)
     galaxy = models.CharField(max_length=20)
-    queued_jobs_hour_avg = models.IntegerField()
-    running_jobs_hour_avg = models.IntegerField()
-    failed_jobs_hour_avg = models.IntegerField()
+    queued_jobs_hour_avg = models.IntegerField(default=0)
+    running_jobs_hour_avg = models.IntegerField(default=0)
+    failed_jobs_hour_avg = models.IntegerField(default=0)
     timestamp = models.DateTimeField()
 
 class HistoryYear(models.Model):
     name = models.CharField(max_length=20)
     galaxy = models.CharField(max_length=20)
-    queued_jobs_day_avg = models.IntegerField()
-    running_jobs_day_avg = models.IntegerField()
-    failed_jobs_day_avg = models.IntegerField()
+    queued_jobs_day_avg = models.IntegerField(default=0)
+    running_jobs_day_avg = models.IntegerField(default=0)
+    failed_jobs_day_avg = models.IntegerField(default=0)
     timestamp = models.DateTimeField()
 
 class HistoryFinal(models.Model):
     name = models.CharField(max_length=20)
     galaxy = models.CharField(max_length=20)
-    queued_jobs_month_avg = models.IntegerField()
-    running_jobs_month_avg = models.IntegerField()
-    failed_jobs_month_avg = models.IntegerField()
+    queued_jobs_month_avg = models.IntegerField(default=0)
+    running_jobs_month_avg = models.IntegerField(default=0)
+    failed_jobs_month_avg = models.IntegerField(default=0)
     timestamp = models.DateTimeField()
 
 # schedulling

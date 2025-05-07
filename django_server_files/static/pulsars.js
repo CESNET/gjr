@@ -39,7 +39,7 @@ function renderPulsar(pulsar, markerFeatureGroup) {
     var users_list = "";
     if (pulsar.active_users) {
     	pulsar.active_users.forEach(user => {
-            users_list += `<li>User ${user.user_id} ran ${user.job_num} jobs in last hour on this machine.</li>`
+            users_list += `<li>User<b>${user.user_id}</b> ran <b>${user.job_num}</b> jobs in last hour on this machine.</li>`
     	});
     }
     var anonym_jobs = 0;

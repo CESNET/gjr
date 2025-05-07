@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from datetime import timedelta, datetime
-from pulsars.models import HistoryYear, HistoryFinal
+from core.models import HistoryYear, HistoryFinal
 from django.db.models import Avg
 import logging
 
