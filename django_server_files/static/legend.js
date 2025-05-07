@@ -49,8 +49,8 @@ function generateLegendHTML2() {
             <option value="minute">last 10 minutes (average per minute)</option>
             <option value="hour">last hour (average per minute)</option>
             <option value="day">last day (average per hour)</option>
-            <option value="day">last month (average per day)</option>
-            <option value="day">last year (average per month)</option>
+            <option value="month">last month (average per day)</option>
+            <option value="year">last year (average per month)</option>
         </select>
         <button type="button" id="history_button" class="history_button" name="play_history">Play history</button>
         <input type="range" id="history_range" class="history_range" name="history_range" min="0" max="100" value="0"></input>
