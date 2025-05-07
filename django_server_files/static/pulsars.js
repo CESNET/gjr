@@ -25,24 +25,38 @@ function renderPulsar(pulsar, markerFeatureGroup) {
         });
     }
     var longest_list = "";
-    pulsar.longest_jobs.forEach(job => {
+    if (pulsar.longest_jobs) {
+    	pulsar.longest_jobs.forEach(job => {
             longest_list += `<li>Job running tool <b>${job.tool}</b> for <b>${job.hours}</b> hours</li>`
-    });
+    	});
+    }
     var tools_list = "";
-    pulsar.most_used_tools.forEach(tool => {
+    if (pulsar.most_used_tools) {
+    	pulsar.most_used_tools.forEach(tool => {
             tools_list += `<li><b>${tool.tool}</b> was computed by <b>${tool.job_num}</b> jobs</li>`
-    });
+    	});
+    }
     var users_list = "";
-    pulsar.active_users.forEach(user => {
+    if (pulsar.active_users) {
+    	pulsar.active_users.forEach(user => {
             users_list += `<li>User ${user.user_id} ran ${user.job_num} jobs in last hour on this machine.</li>`
-    });
+    	});
+    }
+    var anonym_jobs = 0;
+    if (pulsar.anonymous_jobs) {
+    	anonym_jobs = pulsar.anonymous_jobs;
+    }
+    var unique_users = 0;
+    if (pulsar.unique_users) {
+	unique_users = pulsar.unique_users;
+    }
     const tooltipContent = `
         <h3><b>${pulsar.name}</b></h3>
         Queued jobs: <b>${pulsar.queued_jobs}</b><br>
         Running jobs: <b>${pulsar.running_jobs}</b><br>
         Failed jobs in last hour: <b>${pulsar.failed_jobs}</b><br>
-        Anonymous jobs in last hour: <b>${pulsar.anonymous_jobs}</b><br>
-        Unique users in last hour: <b>${pulsar.unique_users}</b><br>
+        Anonymous jobs in last hour: <b>${anonym_jobs}</b><br>
+        Unique users in last hour: <b>${unique_users}</b><br>
         <h5>Longest running jobs:</h5>
         ${longest_list}
         <h5>Most used tools:</h5>

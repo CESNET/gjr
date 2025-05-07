@@ -302,7 +302,7 @@ def update_live_dbs(self, destination_dict):
             pulsar_instance = Pulsar.objects.get(name=destination_id)
         except:
             continue
-        if "user_jobs" in info_list:
+        if "users_jobs" in info_list:
             for record in info_list["tools"]:
                 PulsarActiveUsers.objects.create(
                         pulsar=Pulsar.objects.get(name=destination_id),

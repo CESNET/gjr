@@ -63,9 +63,11 @@ def influxdb_response_to_dict(response):
 
     # init dict for all pulsars data from influxdb of form
     # {"destination_id" :
-    #    {"queued": x,
-    #     "running": y,
-    #     "failed": z}}
+    #    {
+    #     "queued": x,
+    #     "running": y
+    #    }
+    # }
     destination_dict = {}
 
     if 'series' in response:
@@ -82,8 +84,7 @@ def influxdb_response_to_dict(response):
             if not destination_id in destination_dict:
                 destination_dict[destination_id] = {
                     "queued": 0,
-                    "running": 0,
-                    "failed": 0
+                    "running": 0
                 }
 
             destination_dict[destination_id][state] += last_count
@@ -100,15 +101,12 @@ def update_pulsar_db(self, destination_dict):
         if pulsar.name in destination_dict:
             pulsar.queued_jobs = destination_dict[pulsar.name]["queued"]
             pulsar.running_jobs = destination_dict[pulsar.name]["running"]
-            pulsar.failed_jobs = destination_dict[pulsar.name]["failed"]
         else:
             pulsar.queued_jobs = 0
             pulsar.running_jobs = 0
-            pulsar.failed_jobs = 0
             destination_dict[pulsar.name] = {
                 "queued": 0,
-                "running": 0,
-                "failed": 0
+                "running": 0
             }
         pulsar.save()
     logger.info("Pulsar db updated.")
@@ -122,15 +120,13 @@ def store_history_db(self, destination_dict):
             pulsar = History.objects.get(name=destination_id, timestamp=current_time)
             pulsar.queued_jobs += destination_dict[destination_id]["queued"]
             pulsar.running_jobs += destination_dict[destination_id]["running"]
-            pulsar.failed_jobs += destination_dict[destination_id]["failed"]
             pulsar.save()
         except History.DoesNotExist:
             History.objects.create(
                 name=destination_id,
                 galaxy="usegalaxy.eu",
                 queued_jobs=destination_dict[destination_id]["queued"],
-                running_jobs=destination_dict[destination_id]["running"],
-                failed_jobs=destination_dict[destination_id]["failed"],
+                running_jobs=destination_dict[destination_id]["running"]
                 timestamp=current_time
             )
     logger.info("History db updated.")
