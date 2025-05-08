@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
-from core.models import Pulsar, History, Galaxy, PulsarLongestJobs, PulsarMostUsedTools, PulsarActiveUsers, ScheduleStats
+from core.models import Pulsar, History, Galaxy, PulsarLongestJobs, PulsarMostUsedTools, PulsarActiveUsers, ScheduleStats, HistoryMonth, HistoryYear, HistoryFinal
 from collections import defaultdict
 from django.http import JsonResponse
 from django.db.models.functions import Trunc, RowNumber, TruncMinute, TruncHour, ExtractMinute, ExtractSecond, Now
