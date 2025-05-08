@@ -152,6 +152,6 @@ function updateMarkersPie_playHistory(markerClusterGroup) {
         const keys = Object.keys(data);
 
         // start rendering markers fast from moment
-        marker_updater = setInterval(() => playHistory_oneStep(data, keys, history_moment, history_size, range_size, markerClusterGroup), 500);
+        marker_updater = setInterval(() => playHistory_oneStep(data, keys, history_moment, history_size, range_size, markerClusterGroup), 2000);
     });
 }
