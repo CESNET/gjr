@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from core.models import Pulsar, History, Galaxy, PulsarLongestJobs, PulsarMostUsedTools, PulsarActiveUsers, ScheduleStats, HistoryMonth, HistoryYear, HistoryFinal
 from collections import defaultdict
 from django.http import JsonResponse
-from django.db.models.functions import Trunc, RowNumber, TruncMinute, TruncHour, ExtractMinute, ExtractSecond, Now
+from django.db.models.functions import Trunc, RowNumber, TruncMinute, TruncHour, ExtractMinute, ExtractSecond, Now, TruncDay, TruncMonth
 from django.db.models import OuterRef, Subquery, Avg, Min, Count, Q, F, Window, ExpressionWrapper, IntegerField, FloatField, DateTimeField, Value, DurationField
 from django.db.models.expressions import RawSQL
 from django.utils import timezone
@@ -131,9 +131,9 @@ def play_history(request, history_range, history_window):
         ).annotate(
             truncated=TruncDay('timestamp')
         ).values('truncated', 'name', 'galaxy').annotate(
-            average_queued_jobs=Avg('queued_jobs'),
-            average_running_jobs=Avg('running_jobs'),
-            average_failed_jobs=Avg('failed_jobs')
+            average_queued_jobs=Avg('queued_jobs_hour_avg'),
+            average_running_jobs=Avg('running_jobs_hour_avg'),
+            average_failed_jobs=Avg('failed_jobs_hour_avg')
         )
     elif history_window == "year":
         history_objects = HistoryYear.objects.filter(
@@ -141,9 +141,9 @@ def play_history(request, history_range, history_window):
         ).annotate(
             truncated=TruncMonth('timestamp')
         ).values('truncated', 'name', 'galaxy').annotate(
-            average_queued_jobs=Avg('queued_jobs'),
-            average_running_jobs=Avg('running_jobs'),
-            average_failed_jobs=Avg('failed_jobs')
+            average_queued_jobs=Avg('queued_jobs_day_avg'),
+            average_running_jobs=Avg('running_jobs_day_avg'),
+            average_failed_jobs=Avg('failed_jobs_day_avg')
         )
     else:
         logger.critical("bad history window request")
