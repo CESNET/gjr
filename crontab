@@ -2,4 +2,9 @@
 * * * * * root sleep 20; /app/influx_task.sh >> /var/log/cron.log 2>&1
 * * * * * root sleep 40; /app/influx_task.sh >> /var/log/cron.log 2>&1
 0 2 * * * root /app/sqlite_backup.sh >> /var/log/cron.log 2>&1
+0 * * * * root /app/influx_task_hour.sh >> /var/log/cron.log 2>&1
+0 */4 * * * root /app/influx_task_4hours.sh >> /var/log/cron.log 2>&1
+0 0 * * * root /app/day_to_month_db.sh >> /var/log/cron.log 2>&1
+0 3 1 * * root /app/month_to_year_db.sh >> /var/log/cron.log 2>&1
+0 3 1 1 * root /app/year_to_final_db.sh >> /var/log/cron.log 2>&1
 # Don't remove the empty line at the end of this file. It is required to run the cron job

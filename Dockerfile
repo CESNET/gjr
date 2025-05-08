@@ -15,7 +15,12 @@ RUN pip --default-timeout=200 install --no-cache-dir -r requirements.txt && apt-
 # Give execution rights on the cron job
 RUN chmod 0644 /etc/cron.d/run_influx_rutines
 RUN chmod +x /app/influx_task.sh
+RUN chmod +x /app/influx_task_hour.sh
+RUN chmod +x /app/influx_task_4hours.sh
 RUN chmod +x /app/sqlite_backup.sh
+RUN chmod +x /app/day_to_month_db.sh
+RUN chmod +x /app/month_to_year_db.sh
+RUN chmod +x /app/year_to_final_db.sh
 
 # Create the log file to be able to run tail
 RUN touch /var/log/cron.log
