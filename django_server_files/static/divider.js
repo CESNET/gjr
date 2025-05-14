@@ -5,8 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const bottomDiv = document.getElementById('eval-graph');
 
     let isResizing = false;
-    const COLLAPSED_HEIGHT = 0;
-    const EXPANDED_HEIGHT = 200;
 
     divider.addEventListener('mousedown', function (e) {
         isResizing = true;
@@ -18,10 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const containerRect = container.getBoundingClientRect();
             const newTopHeight = e.clientY - containerRect.top;
             const newBottomHeight = containerRect.bottom - e.clientY;
-
-            if (newTopHeight > 50 && newBottomHeight > 0) { // Ensure minimum height
-                topDiv.style.flexBasis = `${newTopHeight}px`;
-                bottomDiv.style.flexBasis = `${newBottomHeight}px`;
+            topDiv.style.flexBasis = `${newTopHeight}px`;
+            bottomDiv.style.flexBasis = `${newBottomHeight}px`;
+            if (newBottomHeight < 30) {
+                dividerDown();
             }
         }
     });
@@ -36,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function dividerUp() {
     bottomDiv = document.getElementById('eval-graph');
-    console.log(bottomDiv.style.flexBasis);
     if (bottomDiv.style.flexBasis == 0) {
         bottomDiv.style.flexBasis = `25%`;
     }
@@ -45,4 +42,6 @@ function dividerUp() {
 function dividerDown() {
     bottomDiv = document.getElementById('eval-graph');
     bottomDiv.style.flexBasis = ``;
+    topDiv = document.getElementById('map');
+    topDiv.style.flexBasis = `100%`;
 }

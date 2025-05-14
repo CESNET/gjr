@@ -3,6 +3,7 @@ html, body {
     width: 100%;
     margin: 0px;
     padding: 0px;
+    overflow: hidden;
 }
 
 #container {
@@ -207,6 +208,19 @@ html, body {
     text-align: center;
     width: 60px;
     height: 82px;
+    padding: 2px;
+    font: 12px sans-serif;
+    background-color: rgba(240, 240, 240, 1);
+    border-radius: 8px;
+    pointer-events: none;
+    border: 2px solid #555;
+}
+
+.tooltiplegend {
+    position: absolute;
+    text-align: center;
+    width: 200;
+    height: 179;
     padding: 2px;
     font: 12px sans-serif;
     background-color: rgba(240, 240, 240, 1);

@@ -147,6 +147,18 @@ function addInteractivity(svg, x, y) {
  * @param {Array} colors - Array of colors representing each dataset.
  */
 function drawLegend(svg, width, labels, colors) {
+    // Create a tooltip div container
+    const tooltip = d3.select("#eval-graph")
+        .append("div")
+        .attr("class", "tooltiplegend")
+        .style("opacity", 0)
+        .style("position", "absolute")
+        .style("pointer-events", "none")
+        .style("background-color", "white")
+        .style("border", "1px solid #ccc")
+        .style("padding", "5px")
+        .style("border-radius", "5px");
+
     const legend = svg.append("g")
         .attr("font-family", "sans-serif")
         .attr("font-size", 11)
@@ -156,17 +168,74 @@ function drawLegend(svg, width, labels, colors) {
         .data(labels)
         .enter().append("g")
         .attr("transform", (d, i) => `translate(0, ${i * 20})`);
+
     legend.append("rect")
         .attr("x", width - 19)
         .attr("width", 19)
         .attr("height", 19)
-        .attr("fill", (d, i) => colors[i]);
+        .style("cursor", "pointer")
+        .attr("fill", (d, i) => colors[i])
+        .on("mouseover", (event, d) => {
+            drawTooltipLegend(tooltip, d)
+        })
+        .on("click", (event, d) => {
+            window.open("https://jsspp.org/papers23/Boezennec.pdf#page=3", '_blank').focus();
+        });
+
     legend.append("text")
         .attr("x", width - 24)
         .attr("y", 9.5)
         .attr("dy", "0.32em")
+        .style("cursor", "pointer")
         .attr("fill", "white")
-        .text(d => d);
+        .text(d => d)
+        .on("mouseover", (event, d) => {
+           drawTooltipLegend(tooltip, d);
+        })
+        .on("mousemove", (event) => {
+            tooltip.style("left", `${event.pageX - tooltip.node().offsetWidth - 40}px`)
+                .style("top", `${event.pageY - 80}px`);
+        })
+        .on("mouseout", () => {
+            tooltip.transition()
+                .duration(500)
+                .style("opacity", 0);
+        })
+        .on("click", (event, d) => {
+            window.open("https://jsspp.org/papers23/Boezennec.pdf#page=3", '_blank').focus();
+        });
+}
+
+/**
+ * Adds a tooltip to legend to describe different metrics.
+ * @param {Object} tooltip - html tooltip object.
+ * @param {String} metric - String representing metric.
+ */
+function drawTooltipLegend(tooltip, metric) {
+     tooltip.transition()
+        .duration(200)
+        .style("opacity", 0.9)
+    if (metric == "Mean Slowdown") {
+        tooltip.html(`<b>${metric}</b>
+                <br>We take all jobs for each four hours (starts in this window and ends in this window) and for every job J we calculate slowdown S which is ratio of the time it spent in the system over its real execution time. Ten we will make average for all these slowdowns in the time window.
+                <br>For more info click on the legend.`
+            ).style("left", `${event.pageX - tooltip.node().offsetWidth - 40}px`)
+            .style("top", `${event.pageY - 80}px`);
+        }
+    if (metric == "Bounded Slowdown") {
+        tooltip.html(`<b>${metric}</b>
+                <br>Similar to mean slowdown but surges extreme cases.
+                <br>For more info click on the legend.`
+            ).style("left", `${event.pageX - tooltip.node().offsetWidth - 40}px`)
+            .style("top", `${event.pageY - 80}px`);
+    }
+    if (metric == "Response Time") {
+        tooltip.html(`<b>${metric}</b>
+                <br>Response time of a job J is the duration between the submission of the job and its completition. Same as for bounded and mean slowdown are are doing average for each for hours.
+                <br>For more info click on the legend.`
+            ).style("left", `${event.pageX - tooltip.node().offsetWidth - 40}px`)
+            .style("top", `${event.pageY - 80}px`);
+    }
 }
 
 /**
