@@ -52,7 +52,7 @@ function generateLegendHTML2() {
             <option value="month">last month (average per day)</option>
             <option value="year">last year (average per month)</option>
         </select>
-        <button type="button" id="history_button" class="history_button" name="play_history">Play history</button>
+        <button type="button" id="history_button" class="history_button" name="play_history" title="For history replay set history window in choice menu above, set range below where you would like to start replay in chosen history window and click this!">Play history</button>
         <input type="range" id="history_range" class="history_range" name="history_range" min="0" max="100" value="0"></input>
         <label id="time_label">Live</label>
         <button type="button" id="live_button" class="live_button" name="live_button">Return to live view</button>`;
@@ -96,7 +96,8 @@ function drawPieChart(svgDiv, data) {
     var arc = svg.selectAll(".arc")
         .data(pie(data))
         .enter().append("g")
-        .attr("class", "arc");    createArcs(arc, path);
+        .attr("class", "arc");
+    createArcs(arc, path);
     addLabelsAndLines(svg, radius);
 }
 
@@ -156,14 +157,6 @@ function addLabelsAndLines(svg, radius) {
             .style("font-size", "12px")
             .style("font-weight", "bold");
     });
-    // svg.append("circle")
-    //     .attr("cx", radius * Math.cos(Math.PI / 6) - 18)
-    //     .attr("cy", -radius * Math.sin(Math.PI / 6) - 5)
-    //     .attr("r", 20)
-    //     .style("fill", "rgba(100, 100, 100)");
-    // svg.append("title")
-    //     .attr("id", "anonymousTooltip")
-    //     .text("Anonymous Jobs");
 }
 
 /**

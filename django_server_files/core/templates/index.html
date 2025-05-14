@@ -19,6 +19,8 @@
     document.addEventListener('DOMContentLoaded', () => {
         let map = createMap([50, 8], 5);
         addLegend(map);
+        // refuse to propagate dragging on range control
+        document.getElementById('history_range').onmousedown = L.DomEvent.stopPropagation;
 
         L.Control.Watermark = L.Control.extend({
             onAdd: function(map) {

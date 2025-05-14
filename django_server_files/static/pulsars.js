@@ -1,6 +1,11 @@
 // global definition of marker updater which is shared
 let marker_updater;
 
+/**
+ * Draw pulsar pie chart with tooltip with information.
+ * @param {Object} pulsar - object representing the pulsar to be drawn
+ * @param {Object} markerFeatureGroup - layer of pulsars in map
+ */
 function renderPulsar(pulsar, markerFeatureGroup) {
     const pulsarJobTotal = pulsar.queued_jobs + pulsar.running_jobs + pulsar.failed_jobs;
     const iconSize = Math.min(200, pulsarJobTotal + 35); // Maintain max size constraint
@@ -63,6 +68,9 @@ function renderPulsar(pulsar, markerFeatureGroup) {
         ${tools_list}
         <h5>Most active users:</h5>
         ${users_list}
+        <br>
+        <p style="color: red;">For a schedule evaluation for this Pulsar click with mouse on the pie chart.</p>
+        <p>To close panel with graph later click the name of the Pulsar or use dragger.</p>
     `;
     const tooltip = L.tooltip({
         content: tooltipContent,
@@ -101,6 +109,10 @@ function renderPulsar(pulsar, markerFeatureGroup) {
     minichart.addTo(markerFeatureGroup);
 }
 
+/**
+ * Draw all pulsars with new data
+ * @param {Object} markerFeatureGroup - layer of pulsars in map
+ */
 function updateMarkersPie_realTime(markerFeatureGroup) {
     // Send a request to the server to get the new job numbers
     fetch('/pulsar-positions/').then(response => response.json()).then(data => {
@@ -111,6 +123,15 @@ function updateMarkersPie_realTime(markerFeatureGroup) {
     });
 }
 
+/**
+ * Draw all pulsars with data from one point in history
+ * @param {Array} data - historic data
+ * @param {Array} keys - array of historic keys (times)
+ * @param {datetime} history_moment - datetime key for keys
+ * @param {Integer} history_size - size of whole history
+ * @param {Integer} range_size - portion which should be played
+ * @param {Object} markerFeatureGroup - layer of pulsars in map
+ */
 function playHistory_oneStep(data, keys, history_moment, history_size, range_size, markerClusterGroup) {
     if (history_moment.index >= history_size) {
         document.getElementById("history_range").value = 0;
@@ -134,6 +155,10 @@ function playHistory_oneStep(data, keys, history_moment, history_size, range_siz
     history_moment.index++;
 }
 
+/**
+ * Function for playing whole history
+ * @param {Object} markerFeatureGroup - layer of pulsars in map
+ */
 function updateMarkersPie_playHistory(markerClusterGroup) {
     // stop real time view
     clearInterval(marker_updater);
@@ -147,10 +172,7 @@ function updateMarkersPie_playHistory(markerClusterGroup) {
         var range_size = document.getElementById("history_range").getAttribute("max");
         var history_moment_index = Math.round((history_size / range_size) * moment);
         var history_moment = { index: history_moment_index };
-
-        // TODO: unreliable - need to make it different (dictionary does not have order you can rely on)
         const keys = Object.keys(data);
-
         // start rendering markers fast from moment
         marker_updater = setInterval(() => playHistory_oneStep(data, keys, history_moment, history_size, range_size, markerClusterGroup), 2000);
     });
