@@ -20,19 +20,19 @@ Then it is necessary to provide your credentials to your InfluxDB and Django sec
 
 Then you can run GJR with _pure Python_, in _Docker container_, or you can use our _Ansible infrastructure play-book_.
 
-## Running with Python virtual environment
+### Running with Python virtual environment
 This is ideal option for quick development of GJR if you would like to **contribute**. _For contributing feel free to fork the project and make pull request and describe your changes_.
 
-### Installing
+#### Installing
 To instal all dependencies just install requirements file: 
 
 ```
 pip install requirements.txt
 ```
 
-### Running application
+#### Running application
 
-#### Inicialization
+##### Inicialization
 When you are running application for the first time, you need to inicialize server and database.
 
 ```
@@ -51,7 +51,7 @@ python3 manage.py makemigrations
 
 before _migrate_ command.
 
-#### Running
+##### Running
 First you need to start the server with:
 
 ```
@@ -82,9 +82,15 @@ If you would like to use real data from galaxy servers where you have acces, you
 python3 manage.py influx_data
 ```
 
+But the command takes just once data from influx, so you need to run it repeatedly with for example [cron](https://en.wikipedia.org/wiki/Cron) script.
+
+Other scripts for InfluxDB data downloading which could be run against InfluxDB are **influx_data_hour** for hour data like failed jobs and so on, and **influx_data_4hours** for statistics once in 4 hours which downloads schedule evaluation.
+
 There are as well programmed commands for removing pulsars by name, for removing galaxies by name and for removing just all pulsar, for more information see: **django_server_files/core/management/commands**.
 
-### Via Docker image
+#### Via Docker image
+This option is great for testing if the whole ecosystem works.
+
 By running classic docker build inside root directory. In repository is accesible working Dockerfile.
 
 ```
