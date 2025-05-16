@@ -89,7 +89,7 @@ Other scripts for InfluxDB data downloading which could be run against InfluxDB 
 There are as well programmed commands for removing pulsars by name, for removing galaxies by name and for removing just all pulsar, for more information see: **django_server_files/core/management/commands**.
 
 #### Via Docker image
-This option is great for testing if the whole ecosystem works.
+This option is great for testing if the whole ecosystem works. Docker image comes with Ubuntu and running periodic commands with cron.
 
 By running classic docker build inside root directory. In repository is accesible working Dockerfile.
 
@@ -103,5 +103,9 @@ Then running docker run.
 docker run --name gjr -p 8000:8000 gjr
 ```
 
-### Use real data from galaxy eu influxdb
-To be able use data from influx database of real galaxies you need to set your environment variables with .env file.
+#### Use ansible deployment scripts
+The most convenient way to run GJR on server is to use Ansible deployment scripts. We have our infrastructure which can be used, but it would need to be adjusted for you environment. Still, you need GJR dockerized in some your favourite docker hub.
+
+For more information you can find our playbooks [here](https://github.com/CESNET/galaxy-iacr/blob/main/ansible/gjr_setup.yml).
+
+Have fun! If you would like to ask more, use this repository.
