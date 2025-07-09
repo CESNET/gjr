@@ -1,50 +1,60 @@
 from django.core.management.base import BaseCommand
 from core.models import History, HistoryMonth
 from django.utils import timezone
-from django.core.management.base import BaseCommand
-from django.utils import timezone
-from datetime import datetime, timedelta
-from django.db.models import Avg, Count
-from django.db import transaction
+from datetime import timedelta
+from django.db.models import Avg
+from django.db.models.functions import ExtractHour
 import logging
 
 logger = logging.getLogger('django')
 
 class Command(BaseCommand):
-    help = (
-        "This script takes data from History database of last day queued, running and failed jobs and makes for every destination for every hour average from these metrics and then store it into HistoryMonth database."
-    )
+    help = "Aggregate the last day's History records into hourly averages in HistoryMonth"
 
     def handle(self, *args, **options):
-        logger.info("Handling db_day_to_month request.")
-        # Define the timeframe for the last day
+        # Set your time window for the last full day (e.g., 24 hours ago up to now)
         now = timezone.now()
         one_day_ago = now - timedelta(days=1)
+
+        # FILTER FOR ONLY THE LAST DAY
+        last_day_data = History.objects.filter(
+            timestamp__gte=one_day_ago,
+            timestamp__lt=now
+        )
+
+        if not last_day_data.exists():
+            logger.info("No History data for the last day (%s - %s). Nothing to aggregate.", one_day_ago, now)
+            return
+
+        # HOURLY AGGREGATION USING ExtractHour
+        hourly_averages = (
+            last_day_data
+            .annotate(hour=ExtractHour('timestamp'))
+            .values('name', 'galaxy', 'hour')
+            .annotate(
+                queued_jobs_hour_avg=Avg('queued_jobs'),
+                running_jobs_hour_avg=Avg('running_jobs'),
+                failed_jobs_hour_avg=Avg('failed_jobs'),
+            )
+            .order_by('name', 'galaxy', 'hour')
+        )
+
+        created_count = 0
+        # SAVE TO HistoryMonth
+        for record in hourly_averages:
+            hour = record['hour']
+            timestamp = one_day_ago.replace(hour=hour, minute=0, second=0, microsecond=0)
+            obj = HistoryMonth.objects.create(
+                name=record['name'],
+                galaxy=record['galaxy'],
+                queued_jobs_hour_avg=int(round(record['queued_jobs_hour_avg'] or 0)),
+                running_jobs_hour_avg=int(round(record['running_jobs_hour_avg'] or 0)),
+                failed_jobs_hour_avg=int(round(record['failed_jobs_hour_avg'] or 0)),
+                timestamp=timestamp,
+            )
+            created_count += 1
+
         # Delete data older than one day
         History.objects.filter(timestamp__lt=one_day_ago).delete()
-        # Query last day's data
-        last_day_data = History.objects.all()
-        # Calculate hourly averages for each destination
-        hourly_averages = (last_day_data
-                           .annotate(hour=timezone.localtime('timestamp').hour)
-                           .values('name', 'galaxy', 'hour')
-                           .annotate(
-                               queued_jobs_hour_avg=Avg('queued_jobs'),
-                               running_jobs_hour_avg=Avg('running_jobs'),
-                               failed_jobs_hour_avg=Avg('failed_jobs'),
-                           )
-                           .order_by('name', 'hour'))
-        # Save the hourly averages to the HistoryMonth model
-        with transaction.atomic():
-            for record in hourly_averages:
-                hour = record['hour']
-                timestamp = now.replace(hour=hour, minute=0, second=0, microsecond=0)
-                HistoryMonth.objects.create(
-                    name=record['name'],
-                    galaxy=record['galaxy'],
-                    queued_jobs_hour_avg=record['queued_jobs_hour_avg'],
-                    running_jobs_hour_avg=record['running_jobs_hour_avg'],
-                    failed_jobs_hour_avg=record['failed_jobs_hour_avg'],
-                    timestamp=timestamp,
-                )
-        logger.info("db_day_to_month operation completed successfully.")
+
+        logger.info("Aggregated %d hourly records into HistoryMonth.", created_count)
