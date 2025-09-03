@@ -21,9 +21,13 @@ class Command(BaseCommand):
         # Define the timeframe for the last day
         now = timezone.now()
         one_day_ago = now - timedelta(days=1)
+        one_month_ago = now - timedelta(days=30)
+        one_year_ago = now - timedelta(days=365) 
         # Delete data older than one day
         History.objects.filter(timestamp__lt=one_day_ago).delete()
-        
+        HistoryMonth.objects.filter(timestamp__lt=one_month_ago).delete()
+        HistoryYear.objects.filter(timestamp__lt=one_year_ago).delete()
+
         # Aggregate data by hour to month db
         hour_aggregates = History.objects.annotate(hour=TruncHour('timestamp')).values('name', 'galaxy', 'hour').annotate(
             queued_jobs_hour_avg=Avg('queued_jobs'),
@@ -57,4 +61,4 @@ class Command(BaseCommand):
                 timestamp=aggregate['day']
             )
 
-        logger.info("tore_db_history operation completed successfully.")
+        logger.info("store_db_history operation completed successfully.")
