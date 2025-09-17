@@ -5,6 +5,10 @@ class Galaxy(models.Model):
     name = models.CharField(max_length=20)
     latitude = models.FloatField()
     longitude = models.FloatField()
+    influxdb_password_var_name = models.CharField(max_length=50)  # name of the environment variable storing the password
+    influxdb_host = models.CharField(max_length=50)
+    influxdb_port = models.IntegerField(default=8086)
+    influxdb_username = models.CharField(max_length=50)
 
 # live pulsar stats
 

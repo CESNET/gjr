@@ -15,6 +15,10 @@ class Command(BaseCommand):
         "Takes data from galaxy influx database and distributes them into live view (pulsar database) and history view (history database)."
     )
 
+    # client dictionary for influxdb conections
+    # TODO: implement multiple connections to different influxDB servers for different galaxy servers
+    clients = {}
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # password from environment variable
@@ -23,6 +27,7 @@ class Command(BaseCommand):
         if not self.influxdb_password:
             logger.warning("INFLUXDB_GALAXY_EU_PASSWORD environment variable is not set.")
         # Establish the InfluxDB client
+        # TODO: přesunout do galaxies.txt všechna data a dát tam i názvt proměnných se secretama atd., abych to tady jen mohl procházet for loopem, tím pádem bude ale ještě potřeba změnit schéma databáze
         try:
             logger.info("Connecting to influxDB.")
             self.client = InfluxDBClient(
