@@ -2,75 +2,78 @@ import random
 import time
 import os
 from django.core.management.base import BaseCommand
-from core.models import Pulsar, History
+from core.models import Galaxy, Pulsar, History
 from influxdb import InfluxDBClient
 from django.utils import timezone
 import logging
 
 logger = logging.getLogger('django')
-galaxy_iternal_resource_name = "eu_pbs"
 
 class Command(BaseCommand):
     help = (
-        "Takes data from galaxy influx database and distributes them into live view (pulsar database) and history view (history database)."
+        "Takes data from connected galaxy servers influx databases (which are in db) and distributes them into live view (pulsar database) and history view (history database)."
     )
-
-    # client dictionary for influxdb conections
-    # TODO: implement multiple connections to different influxDB servers for different galaxy servers
-    clients = {}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # password from environment variable
-        self.influxdb_password = os.environ.get('INFLUXDB_GALAXY_EU_PASSWORD')
-        # Ensure password is retrieved
-        if not self.influxdb_password:
-            logger.warning("INFLUXDB_GALAXY_EU_PASSWORD environment variable is not set.")
-        # Establish the InfluxDB client
-        # TODO: přesunout do galaxies.txt všechna data a dát tam i názvt proměnných se secretama atd., abych to tady jen mohl procházet for loopem, tím pádem bude ale ještě potřeba změnit schéma databáze
-        try:
-            logger.info("Connecting to influxDB.")
-            self.client = InfluxDBClient(
-                host="influxdb.galaxyproject.eu",
-                port=8086,
-                username="esg",
-                password=self.influxdb_password,
-                database="galaxy",
-                ssl=True,
-                verify_ssl=True
-            )
-            logger.info("Finished connecting to influxDB.")
-        except Exception as e:
-            logger.error(f"Failed to connect to InfluxDB: {e}")
-            self.client = None
+        self.clients = {}  # {galaxy_name: client}
+        self.galaxies = Galaxy.objects.all()
+        for galaxy in self.galaxies:
+            password = os.environ.get(galaxy.influxdb_password_var_name)
+            if not password:
+                logger.warning(f"Env variable {galaxy.influxdb_password_var_name} not set for galaxy {galaxy.name}. Skipping.")
+                continue
+            try:
+                client = InfluxDBClient(
+                    host=galaxy.influxdb_host,
+                    port=galaxy.influxdb_port,
+                    username=galaxy.influxdb_username,
+                    password=password,
+                    database="galaxy",
+                    ssl=True,
+                    verify_ssl=True
+                )
+                self.clients[galaxy.name] = client
+                logger.info(f"Connected to InfluxDB for galaxy {galaxy.name}.")
+            except Exception as e:
+                logger.error(f"Failed to connect to InfluxDB for galaxy {galaxy.name}: {e}")
 
     def handle(self, *args, **options):
         logger.info("Handling update_influx_data request.")
-        # control influxDB client
-        if self.client:
-            logger.info("Still successfully connected to InfluxDB.")
-        else:
-            logger.error("InfluxDB connection failed.")
-        # request influxDB
-        logger.info("Requesting influxDB with SQL query.")
-        results = self.client.query(
-            # select all machines (both pulsars and tpvs of galaxy servers)
-            'SELECT last("count") FROM "queue_by_destination" GROUP BY "destination_id", "state"'
-        )
-        logger.info("InfluxDB response successfully stored.")
-        db_dict = influxdb_response_to_dict(results.raw)
+        # init dict for all galaxy data from influxdbs of form
+        # {"galaxy_name" : 
+        #   {"destination_id" :
+        #       {
+        #           "queued" : x,
+        #           "running" : y
+        #       }
+        #   }
+        # }
+        db_dict = {}
+        for galaxy_name, client in self.clients.items():
+            if client:
+                logger.info("Still successfully connected to InfluxDB of " + galaxy_name)
+            else:
+                logger.error("InfluxDB connection failed of " + galaxy_name)
+            logger.info("Requesting influxDB with SQL query of " + galaxy_name)
+            results = client.query(
+                # select all machines (both pulsars and tpvs of galaxy servers)
+                'SELECT last("count") FROM "queue_by_destination" GROUP BY "destination_id", "state"'
+            )
+            logger.info("InfluxDB response successfully stored from " + galaxy_name)
+            db_dict[galaxy_name] = influxdb_response_to_dict(results.raw, galaxy_name)
         update_pulsar_db(self, db_dict)
         store_history_db(self, db_dict)
 
 # extract raw reponse from influxDB to dictionary and return dict
-def influxdb_response_to_dict(response):
+def influxdb_response_to_dict(response, galaxy_name):
     logger.info("Creating data structure with influx data.")
 
-    # init dict for all pulsars data from influxdb of form
+    # init dict for all pulsars data from influxdb of one galaxy of form
     # {"destination_id" :
     #    {
-    #     "queued": x,
-    #     "running": y
+    #     "queued" : x,
+    #     "running" : y
     #    }
     # }
     destination_dict = {}
@@ -81,7 +84,7 @@ def influxdb_response_to_dict(response):
 
             # destination_id preprocessing (nasty thing but at almost each galaxy server there is multiple computing clusters running at the same geolocation so I will call all of them just galaxy pbs - in this case eu_pbs)
             if not "pulsar" in destination_id:
-                destination_id = galaxy_iternal_resource_name
+                destination_id = galaxy_name.split('.')[-1] + '_pbs'
 
             state = series['tags']['state']
             last_count = series['values'][0][1]
@@ -100,38 +103,40 @@ def influxdb_response_to_dict(response):
     return destination_dict
 
 # updates pulsar database with current influx data
-def update_pulsar_db(self, destination_dict):
+def update_pulsar_db(self, db_dict):
     logger.info("Updating pulsar db.")
-    for pulsar in Pulsar.objects.all():
-        if pulsar.name in destination_dict:
-            pulsar.queued_jobs = destination_dict[pulsar.name]["queued"]
-            pulsar.running_jobs = destination_dict[pulsar.name]["running"]
-        else:
-            pulsar.queued_jobs = 0
-            pulsar.running_jobs = 0
-            destination_dict[pulsar.name] = {
-                "queued": 0,
-                "running": 0
-            }
-        pulsar.save()
-    logger.info("Pulsar db updated.")
+    for galaxy_name in db_dict:
+        for pulsar in Pulsar.objects.where(galaxy=galaxy_name):
+            if pulsar.name in db_dict:
+                pulsar.queued_jobs = db_dict[pulsar.name]["queued"]
+                pulsar.running_jobs = db_dict[pulsar.name]["running"]
+            else:
+                pulsar.queued_jobs = 0
+                pulsar.running_jobs = 0
+                db_dict[pulsar.name] = {
+                    "queued": 0,
+                    "running": 0
+                }
+            pulsar.save()
+        logger.info("Pulsar db updated.")
 
 # store current influx data into history database
-def store_history_db(self, destination_dict):
+def store_history_db(self, db_dict):
     logger.info("Updating history db.")
     current_time = timezone.now()
-    for destination_id in destination_dict:
-        try:
-            pulsar = History.objects.get(name=destination_id, timestamp=current_time)
-            pulsar.queued_jobs += destination_dict[destination_id]["queued"]
-            pulsar.running_jobs += destination_dict[destination_id]["running"]
-            pulsar.save()
-        except History.DoesNotExist:
-            History.objects.create(
-                name=destination_id,
-                galaxy="usegalaxy.eu",
-                queued_jobs=destination_dict[destination_id]["queued"],
-                running_jobs=destination_dict[destination_id]["running"],
-                timestamp=current_time
-            )
+    for galaxy_name in db_dict:
+        for destination_id in db_dict[galaxy_name]:
+            try:
+                pulsar = History.objects.get(name=destination_id, timestamp=current_time)
+                pulsar.queued_jobs += db_dict[galaxy_name][destination_id]["queued"]
+                pulsar.running_jobs += db_dict[galaxy_name][destination_id]["running"]
+                pulsar.save()
+            except History.DoesNotExist:
+                History.objects.create(
+                    name=destination_id,
+                    galaxy=galaxy_name,
+                    queued_jobs=db_dict[galaxy_name][destination_id]["queued"],
+                    running_jobs=db_dict[galaxy_name][destination_id]["running"],
+                    timestamp=current_time
+                )
     logger.info("History db updated.")

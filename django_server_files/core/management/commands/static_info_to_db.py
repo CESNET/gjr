@@ -68,7 +68,8 @@ class Command(BaseCommand):
             influxdb_password_var_name=influxdb_password_var_name,
             influxdb_host=influxdb_host,
             influxdb_port=influxdb_port,
-            influxdb_username=influxdb_username
+            influxdb_username=influxdb_username,
+            pbs_name=galaxy_name.split('.')[-1] + '_pbs'  # e.g. usegalaxy.eu -> eu_pbs
         )
         if created:
             self.stdout.write(self.style.SUCCESS(f"Created galaxy: {galaxy_name}"))

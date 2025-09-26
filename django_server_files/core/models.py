@@ -9,6 +9,7 @@ class Galaxy(models.Model):
     influxdb_host = models.CharField(max_length=50)
     influxdb_port = models.IntegerField(default=8086)
     influxdb_username = models.CharField(max_length=50)
+    pbs_name = models.CharField(max_length=20)  # name of the pbs server in influxdb
 
 # live pulsar stats
 
