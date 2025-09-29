@@ -1,5 +1,3 @@
-import random
-import time
 import os
 from django.core.management.base import BaseCommand
 from core.models import Galaxy, Pulsar, History
@@ -21,6 +19,7 @@ class Command(BaseCommand):
         for galaxy in self.galaxies:
             password = os.environ.get(galaxy.influxdb_password_var_name)
             if not password:
+                print(f"Env variable {galaxy.influxdb_password_var_name} not set for galaxy {galaxy.name}. Skipping.")
                 logger.warning(f"Env variable {galaxy.influxdb_password_var_name} not set for galaxy {galaxy.name}. Skipping.")
                 continue
             try:
@@ -36,7 +35,10 @@ class Command(BaseCommand):
                 self.clients[galaxy.name] = client
                 logger.info(f"Connected to InfluxDB for galaxy {galaxy.name}.")
             except Exception as e:
+                print(f"{e}")
                 logger.error(f"Failed to connect to InfluxDB for galaxy {galaxy.name}: {e}")
+        print(self.galaxies)
+        print(self.clients)
 
     def handle(self, *args, **options):
         logger.info("Handling update_influx_data request.")
@@ -62,6 +64,7 @@ class Command(BaseCommand):
             )
             logger.info("InfluxDB response successfully stored from " + galaxy_name)
             db_dict[galaxy_name] = influxdb_response_to_dict(results.raw, galaxy_name)
+        print(db_dict)
         update_pulsar_db(self, db_dict)
         store_history_db(self, db_dict)
 
@@ -106,14 +109,14 @@ def influxdb_response_to_dict(response, galaxy_name):
 def update_pulsar_db(self, db_dict):
     logger.info("Updating pulsar db.")
     for galaxy_name in db_dict:
-        for pulsar in Pulsar.objects.where(galaxy=galaxy_name):
+        for pulsar in Pulsar.objects.filter(galaxy=galaxy_name):
             if pulsar.name in db_dict:
-                pulsar.queued_jobs = db_dict[pulsar.name]["queued"]
-                pulsar.running_jobs = db_dict[pulsar.name]["running"]
+                pulsar.queued_jobs = db_dict[galaxy_name][pulsar.name]["queued"]
+                pulsar.running_jobs = db_dict[galaxy_name][pulsar.name]["running"]
             else:
                 pulsar.queued_jobs = 0
                 pulsar.running_jobs = 0
-                db_dict[pulsar.name] = {
+                db_dict[galaxy_name][pulsar.name] = {
                     "queued": 0,
                     "running": 0
                 }
