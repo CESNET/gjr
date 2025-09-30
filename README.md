@@ -8,8 +8,23 @@ Application visualizes jobs of an instance of a galaxy server, how they are dist
 Application is still in early version and we work on development. 
 
 ## Official running instance by CESNET and Metacentrum
+On the website below we have running instance of GJR. We are collecting more and more Galaxy servers to join this central instance.
 
 [https://gjr.metacentrum.cz](https://gjr.metacentrum.cz)
+
+We want more Galaxy servers on our central instance, so if you are an admin and you do not see your Galaxy at address above, read below!
+
+### What to do if you are an Galaxy admin and you would like to add your Galaxy server to the GJR central instance?
+We need just few things! 
+
+1) Your Galaxy is sending data to the InfluxDB
+2) You send us credentials to read the InfluxDB
+3) You send us information about your Galaxy server in this format: **django_server_files/static/db_static_data/galaxies.txt**
+4) You send us information about your Pulsars in this format: **django_server_files/static/db_static_data/pulsars.txt**
+
+You can use this repository or write me (the author) on mail tomas.vondrak@cesnet.cz and we can set up more safe communication channel, for example Matrix.
+
+Then you need to wait few days or weeks and soon we will add your Galaxy and Pulsars there.
 
 ## Running Galaxy Job Radar for your own Galaxy instance
 GJR takes data from InfluxDB of a Galaxy instance so first you need to set up InfluxDB for your instance and periodically fill it with necessary data. There is Galaxy tutorial for Galaxy admins how to set up InfluxDB ([https://training.galaxyproject.org/training-material/topics/admin/tutorials/monitoring/slides-plain.html](https://training.galaxyproject.org/training-material/topics/admin/tutorials/monitoring/slides-plain.html)). Ansible infrastructure play-book for filling InfluxDB with neccessary data can be find here: [https://github.com/usegalaxy-eu/infrastructure-playbook/tree/master/roles/usegalaxy-eu.job-radar-stats-influxdb](https://github.com/usegalaxy-eu/infrastructure-playbook/tree/master/roles/usegalaxy-eu.job-radar-stats-influxdb).
