@@ -19,7 +19,7 @@ We need just few things!
 
 Central **Galaxy Job Radar** instance is running on the server at CESNET in Czech Republic. It takes data from each connected **Galaxy Server**. Each Galaxy server has its own **Galaxy database** and they also have their own **InfluxDB** database. GJR goes over InfluxDBs of connected Galaxy servers and requests them for new data periodically. Because of this, we need every Galaxy admin to set up his InfluxDB, fill it periodically with new data with gxadmin scripts and give us credentials to this database. 
 
-<img width="983" height="849" alt="image" src="https://github.com/user-attachments/assets/d1429cd4-53da-4c33-a8f0-dec6896d314a" />
+<img width="583" height="449" alt="image" src="https://github.com/user-attachments/assets/d1429cd4-53da-4c33-a8f0-dec6896d314a" />
 
 So we need:
 
