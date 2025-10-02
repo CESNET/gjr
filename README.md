@@ -25,8 +25,8 @@ So we need:
 
 1) Your Galaxy is [sending data to your InfluxDB](https://github.com/usegalaxy-eu/infrastructure-playbook/tree/master/roles/usegalaxy-eu.job-radar-stats-influxdb)
 2) You send us credentials to read the InfluxDB (especially the password, hostname and etc. is already included in points below)
-3) You send us information about your Galaxy server in this format: [django_server_files/static/db_static_data/galaxies.txt](https://github.com/CESNET/gjr/blob/main/django_server_files/static/db_static_data/galaxies.txt)
-4) You send us information about your Pulsars in this format: [django_server_files/static/db_static_data/pulsars.txt](https://github.com/CESNET/gjr/blob/main/django_server_files/static/db_static_data/pulsars.txt)
+3) You send us information about your Galaxy server in this format: [django_server_files/static/db_static_data/galaxies.txt](https://github.com/CESNET/gjr/blob/dev/django_server_files/static/db_static_data/galaxies.txt)
+4) You send us information about your Pulsars in this format: [django_server_files/static/db_static_data/pulsars.txt](https://github.com/CESNET/gjr/blob/dev/django_server_files/static/db_static_data/pulsars.txt)
 
 You can use this repository or write me (the author) on mail tomas.vondrak@cesnet.cz and we can set up more safe communication channel, for example Matrix.
 
