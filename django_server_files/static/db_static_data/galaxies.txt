@@ -1,2 +1,3 @@
-name;lat;long
-usegalaxy.eu;48.012669109891426;7.835061597283835
+name;lat;long;influxdb_password_var_name;influxdb_host;influxdb_port;influxdb_username;pbs_name
+usegalaxy.eu;48.012669109891426;7.835061597283835;INFLUXDB_GALAXY_EU_PASSWORD;influxdb.galaxyproject.eu;8086;esg;eu_pbs
+usegalaxy.be;51.0538075;3.7244369;INFLUXDB_GALAXY_BE_PASSWORD;test.usegalaxy.be;59886;gjr_user;be_pbs

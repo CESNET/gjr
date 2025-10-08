@@ -22,8 +22,20 @@ class Command(BaseCommand):
                 name = row['name']
                 latitude = float(row['lat'])
                 longitude = float(row['long'])
+                influxdb_password_var_name = row['influxdb_password_var_name']
+                influxdb_host = row['influxdb_host']
+                influxdb_port = int(row['influxdb_port'])
+                influxdb_username = row['influxdb_username']
 
-                self.add_galaxy_server(name, latitude, longitude)
+                self.add_galaxy_server(
+                    name, 
+                    latitude, 
+                    longitude, 
+                    influxdb_password_var_name, 
+                    influxdb_host, 
+                    influxdb_port, 
+                    influxdb_username
+                )                                   
 
             self.stdout.write(self.style.SUCCESS(f"Successfully added galaxies from {galaxies_path}"))
 
@@ -48,11 +60,16 @@ class Command(BaseCommand):
 
             self.stdout.write(self.style.SUCCESS(f"Successfully added pulsars from {pulsars_path}"))
 
-    def add_galaxy_server(self, galaxy_name, latitude, longitude):
+    def add_galaxy_server(self, galaxy_name, latitude, longitude, influxdb_password_var_name, influxdb_host, influxdb_port, influxdb_username):
         _, created = Galaxy.objects.get_or_create(
             name=galaxy_name,
             latitude=latitude,
-            longitude=longitude
+            longitude=longitude, 
+            influxdb_password_var_name=influxdb_password_var_name,
+            influxdb_host=influxdb_host,
+            influxdb_port=influxdb_port,
+            influxdb_username=influxdb_username,
+            pbs_name=galaxy_name.split('.')[-1] + '_pbs'  # e.g. usegalaxy.eu -> eu_pbs
         )
         if created:
             self.stdout.write(self.style.SUCCESS(f"Created galaxy: {galaxy_name}"))

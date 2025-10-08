@@ -13,3 +13,6 @@ usegalaxy.eu;pulsar_tubitak01_tpv;39.9207758;32.8540497;0;Ankara - TUBITAK ULAKB
 usegalaxy.eu;pulsar_cyf01_tpv;52.237049;21.017532;0;Krakow - Cyfronet
 usegalaxy.eu;pulsar_hcmr01_tpv;35.3369294;25.1281525;0;Herakilon-Crete - HCMR
 usegalaxy.eu;pulsar_greek_tpv;38.0217778;23.7427561;0;Greek FAIR-Ease
+usegalaxy.be;be_pbs;51.0538075;3.7244369;0;belgium pbs (GHENT)
+usegalaxy.be;pulsar_vib_docker_gpu;51.0114519;3.7100900;0;GHENT VIB docker pulsar (testing)
+usegalaxy.be;pulsar_vib_tpv;51.0106006;3.7100631;0;GHENT VIB tpv pulsar (testing)
