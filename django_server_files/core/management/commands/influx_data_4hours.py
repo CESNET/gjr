@@ -1,13 +1,11 @@
-import time
 import os
 from django.core.management.base import BaseCommand
-from core.models import ScheduleStats
+from core.models import Galaxy, ScheduleStats
 from influxdb import InfluxDBClient
 from django.utils import timezone
 import logging
 
 logger = logging.getLogger('django')
-galaxy_iternal_resource_name = "eu_pbs"
 
 class Command(BaseCommand):
     help = (
@@ -16,73 +14,80 @@ class Command(BaseCommand):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # password from environment variable
-        self.influxdb_password = os.environ.get('INFLUXDB_GALAXY_EU_PASSWORD')
-        # Ensure password is retrieved
-        if not self.influxdb_password:
-            logger.warning("INFLUXDB_GALAXY_EU_PASSWORD environment variable is not set.")
-        # Establish the InfluxDB client
-        try:
-            logger.info("Connecting to influxDB.")
-            self.client = InfluxDBClient(
-                host="influxdb.galaxyproject.eu",
-                port=8086,
-                username="esg",
-                password=self.influxdb_password,
-                database="galaxy",
-                ssl=True,
-                verify_ssl=True
-            )
-            logger.info("Finished connecting to influxDB.")
-        except Exception as e:
-            logger.error(f"Failed to connect to InfluxDB: {e}")
-            self.client = None
+        self.clients = {}  # {galaxy_name: client}
+        self.galaxies = Galaxy.objects.all()
+        for galaxy in self.galaxies:
+            password = os.environ.get(galaxy.influxdb_password_var_name)
+            if not password:
+                print(f"Env variable {galaxy.influxdb_password_var_name} not set for galaxy {galaxy.name}. Skipping.")
+                logger.warning(f"Env variable {galaxy.influxdb_password_var_name} not set for galaxy {galaxy.name}. Skipping.")
+                continue
+            try:
+                client = InfluxDBClient(
+                    host=galaxy.influxdb_host,
+                    port=galaxy.influxdb_port,
+                    username=galaxy.influxdb_username,
+                    password=password,
+                    database="galaxy",
+                    ssl=True,
+                    verify_ssl=True
+                )
+                self.clients[galaxy.name] = client
+                logger.info(f"Connected to InfluxDB for galaxy {galaxy.name}.")
+            except Exception as e:
+                print(f"{e}")
+                logger.error(f"Failed to connect to InfluxDB for galaxy {galaxy.name}: {e}")
 
     def handle(self, *args, **options):
         logger.info("Handling update influx data for last four hours (scheduling stats) request.")
-        # control influxDB client
-        if self.client:
-            logger.info("Still successfully connected to InfluxDB.")
-        else:
-            logger.error("InfluxDB connection failed.")
+        current_time = timezone.now()
+        for galaxy_name, client in self.clients.items():
+            # control influxDB client
+            if client:
+                logger.info("Still successfully connected to InfluxDB.")
+            else:
+                logger.error("InfluxDB connection failed.")
 
-        galaxy_job_metadata, galaxy_job_state = self.get_job_schedule_data_from_influx()
+            galaxy_job_metadata, galaxy_job_state = get_job_schedule_data_from_influx(client, galaxy_name)
 
-        # Create dictionaries for easier access
-        metadata_columns = galaxy_job_metadata['series'][0]['columns']
-        metadata_values = galaxy_job_metadata['series'][0]['values']
-        metadata_dict = {row[metadata_columns.index('job_id')]: dict(zip(metadata_columns, row)) for row in metadata_values}
+            if len(galaxy_job_metadata['series']) <= 0 or len(galaxy_job_state['series']) <= 0:
+                logger.warning(f"No data found in InfluxDB for galaxy {galaxy_name}. Skipping.")
+                return
 
-        state_columns = galaxy_job_state['series'][0]['columns']
-        state_values = galaxy_job_state['series'][0]['values']
-        state_dict = {row[state_columns.index('job_id')]: dict(zip(state_columns, row)) for row in state_values}
+            # Create dictionaries for easier access
+            metadata_columns = galaxy_job_metadata['series'][0]['columns']
+            metadata_values = galaxy_job_metadata['series'][0]['values']
+            metadata_dict = {row[metadata_columns.index('job_id')]: dict(zip(metadata_columns, row)) for row in metadata_values}
 
-        # Join the datasets based on job_id
-        combined_data = {}
-        for job_id, metadata in metadata_dict.items():
-            if job_id in state_dict:
-                combined_data[job_id] = {**metadata, **state_dict[job_id]}
+            state_columns = galaxy_job_state['series'][0]['columns']
+            state_values = galaxy_job_state['series'][0]['values']
+            state_dict = {row[state_columns.index('job_id')]: dict(zip(state_columns, row)) for row in state_values}
 
-        metrics = calculate_metrics(combined_data, 1.5)
-        update_schedule_metrics_db(metrics)
+            # Join the datasets based on job_id
+            combined_data = {}
+            for job_id, metadata in metadata_dict.items():
+                if job_id in state_dict:
+                    combined_data[job_id] = {**metadata, **state_dict[job_id]}
 
-    def get_job_schedule_data_from_influx(self):
-        logger.info("Storing scheduling jobs data")
-        galaxy_job_metadata = self.client.query(
-            'SELECT * FROM "galaxy_job_metadata" WHERE time > now() - 14h'
-        ).raw
-        galaxy_job_state = self.client.query(
-            'SELECT * FROM "galaxy_job_state" WHERE time > now() - 14h'
-        ).raw
-        logger.info("influx data about scheduled jobs saved")
-        return galaxy_job_metadata, galaxy_job_state
+            metrics = calculate_metrics(combined_data, 1.5)
+            update_schedule_metrics_db(metrics, current_time, galaxy_name)
 
-def update_schedule_metrics_db(metrics):
-    logger.info("Updating schedule stats db.")
-    current_time = timezone.now()
+def get_job_schedule_data_from_influx(client, galaxy_name):
+    logger.info("Storing scheduling jobs data from {galaxy_name}.")
+    galaxy_job_metadata = client.query(
+        'SELECT * FROM "galaxy_job_metadata" WHERE time > now() - 14h'
+    ).raw
+    galaxy_job_state = client.query(
+        'SELECT * FROM "galaxy_job_state" WHERE time > now() - 14h'
+    ).raw
+    logger.info("influx data about scheduled jobs saved from {galaxy_name}.")
+    return galaxy_job_metadata, galaxy_job_state
+
+def update_schedule_metrics_db(metrics, current_time, galaxy_name):
+    logger.info("Updating schedule stats db of {galaxy_name}")
     dest_dict = {}
     for job_id, job_metrics in metrics.items():
-        dest_id = galaxy_iternal_resource_name if not 'pulsar' in job_metrics['dest_id'] else job_metrics['dest_id']
+        dest_id = galaxy_name.split('.')[-1] + '_pbs' if not 'pulsar' in job_metrics['dest_id'] else job_metrics['dest_id']
         if not dest_id in dest_dict:
             dest_dict[dest_id] = [{
                 'job_id': job_id,
@@ -97,7 +102,6 @@ def update_schedule_metrics_db(metrics):
                 'mean_slowdown': job_metrics['mean_slowdown'],
                 'bounded_slowdown': job_metrics['bounded_slowdown']
             })
-    dest_metrics = {}
     for dest_id, jobs in dest_dict.items():
         mean_slowdown_avg = 0
         bounded_slowdown_avg = 0
@@ -116,7 +120,7 @@ def update_schedule_metrics_db(metrics):
             bounded_slowndown=bounded_slowdown_avg,
             response_time=response_time_avg,
         )
-    logger.info("Schedule stats db updated.")
+    logger.info("Schedule stats db updated of {galaxy_name}.")
 
 def calculate_metrics(data, tau):
     metrics = {}

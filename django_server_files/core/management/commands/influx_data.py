@@ -37,8 +37,6 @@ class Command(BaseCommand):
             except Exception as e:
                 print(f"{e}")
                 logger.error(f"Failed to connect to InfluxDB for galaxy {galaxy.name}: {e}")
-        print(self.galaxies)
-        print(self.clients)
 
     def handle(self, *args, **options):
         logger.info("Handling update_influx_data request.")
@@ -110,7 +108,7 @@ def update_pulsar_db(self, db_dict):
     logger.info("Updating pulsar db.")
     for galaxy_name in db_dict:
         for pulsar in Pulsar.objects.filter(galaxy=galaxy_name):
-            if pulsar.name in db_dict:
+            if pulsar.name in db_dict[galaxy_name]:
                 pulsar.queued_jobs = db_dict[galaxy_name][pulsar.name]["queued"]
                 pulsar.running_jobs = db_dict[galaxy_name][pulsar.name]["running"]
             else:
@@ -121,7 +119,7 @@ def update_pulsar_db(self, db_dict):
                     "running": 0
                 }
             pulsar.save()
-        logger.info("Pulsar db updated.")
+    logger.info("Pulsar db updated.")
 
 # store current influx data into history database
 def store_history_db(self, db_dict):
