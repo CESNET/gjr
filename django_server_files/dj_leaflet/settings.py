@@ -17,7 +17,7 @@ SECRET_KEY = config('SECRET_KEY', cast=str, default=get_random_secret_key())
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', cast=bool, default=False)
 
-ALLOWED_HOSTS = ['.gjr.metacentrum.cz']
+ALLOWED_HOSTS = ['.gjr.metacentrum.cz', '127.0.0.1']
 
 CSFR_TRUSTED_ORIGINS = ['https://*.gjr.metacentrum.cz']
 
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -53,7 +54,7 @@ ROOT_URLCONF = 'dj_leaflet.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'core' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -150,6 +151,8 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS  = [
     BASE_DIR / 'static'
 ]
+
+STATIC_ROOT = BASE_DIR / '../../staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
