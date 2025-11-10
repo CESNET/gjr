@@ -13,4 +13,7 @@ python /app/django_server_files/manage.py influx_data_4hours
 cron
 
 # Start the Django development server
-exec python /app/django_server_files/manage.py runserver 0.0.0.0:8000
+# exec python /app/django_server_files/manage.py runserver 0.0.0.0:8000
+
+# Start Gunicorn server
+exec gunicorn dj_leaflet.wsgi:application --bind 0.0.0.0:8000
