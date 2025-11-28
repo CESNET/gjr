@@ -16,4 +16,5 @@ cron
 # exec python /app/django_server_files/manage.py runserver 0.0.0.0:8000
 
 # Start Gunicorn server
+cd /app/django_server_files
 exec gunicorn dj_leaflet.wsgi:application --bind 0.0.0.0:8000
