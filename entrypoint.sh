@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Collect static files
+python /app/django_server_files/manage.py collectstatic --noinput
+
 # Run database migrations
 python /app/django_server_files/manage.py migrate
 python /app/django_server_files/manage.py influx_data
