@@ -17,7 +17,7 @@ SECRET_KEY = config('SECRET_KEY', cast=str, default=get_random_secret_key())
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', cast=bool, default=False)
 
-ALLOWED_HOSTS = ['.gjr.metacentrum.cz', '127.0.0.1']
+ALLOWED_HOSTS = ['.gjr.metacentrum.cz', '127.0.0.1', '10.1.1.21', '10.1.2.21', '10.1.3.21']
 
 CSFR_TRUSTED_ORIGINS = ['https://*.gjr.metacentrum.cz']
 
