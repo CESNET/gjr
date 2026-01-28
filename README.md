@@ -17,13 +17,17 @@ We want more Galaxy servers on our central instance, so if you are an admin and 
 ### What to do if you are an Galaxy admin and you would like to add your Galaxy server to the GJR central instance?
 We need just few things! 
 
-Central **Galaxy Job Radar** instance is running on the server at CESNET in Czech Republic. It takes data from each connected **Galaxy Server**. Each Galaxy server has its own **Galaxy database** and they also have their own **InfluxDB** database. GJR goes over InfluxDBs of connected Galaxy servers and requests them for new data periodically. Because of this, we need every Galaxy admin to set up their InfluxDB, fill it periodically with new data with **gxadmin** scripts below and give us credentials to this database. On how to setup InfluxDB and Telegraf app for your Galaxy server you can follow up here: [https://training.galaxyproject.org/training-material/topics/admin/tutorials/monitoring/slides-plain.html](https://training.galaxyproject.org/training-material/topics/admin/tutorials/monitoring/slides-plain.html). Telegraf is the tool, which can run your gxadmin scripts periodically and fill the Influx DB with obtained data. Gxadmin scripts that you will need you can find [here](https://github.com/usegalaxy-eu/infrastructure-playbook/tree/master/roles/usegalaxy-eu.job-radar-stats-influxdb/files). With the tutorial mentioned above you can learn how to setup Telegraf so it will use mentioned gxadmin scripts.
+Central **Galaxy Job Radar** instance is running on the server at CESNET in Czech Republic. It takes data from each connected **Galaxy Server**. Each Galaxy server has its own **Galaxy database** and they also have their own **InfluxDB** database. GJR goes over InfluxDBs of connected Galaxy servers and requests them for new data periodically. 
 
 <img width="583" height="449" alt="image" src="https://github.com/user-attachments/assets/d1429cd4-53da-4c33-a8f0-dec6896d314a" />
 
+Because of this, we need every Galaxy admin to set up their InfluxDB, fill it periodically with new data with **gxadmin** scripts below and give us credentials to this database. On how to setup InfluxDB and Telegraf app for your Galaxy server you can follow up here: [https://training.galaxyproject.org/training-material/topics/admin/tutorials/monitoring/slides-plain.html](https://training.galaxyproject.org/training-material/topics/admin/tutorials/monitoring/slides-plain.html). Telegraf is the tool, which can run your gxadmin scripts periodically and fill the InfluxDB with obtained data. Gxadmin scripts that you will need you can find [here](https://github.com/usegalaxy-eu/infrastructure-playbook/tree/master/roles/usegalaxy-eu.job-radar-stats-influxdb/files). With the tutorial mentioned above you can learn how to setup Telegraf so it will use mentioned gxadmin scripts.
+
+<img width="537" height="212" alt="galaxy_data_flow" src="https://github.com/user-attachments/assets/b8d4dc16-8542-4c41-9e1b-b7800781c819" />
+
 So we need:
 
-1) Your Galaxy is [sending data to your InfluxDB](https://github.com/usegalaxy-eu/infrastructure-playbook/tree/master/roles/usegalaxy-eu.job-radar-stats-influxdb)
+1) Your Galaxy is [sending data to your InfluxDB via gxadmin scripts and Telegraf](https://github.com/usegalaxy-eu/infrastructure-playbook/tree/master/roles/usegalaxy-eu.job-radar-stats-influxdb)
 2) You send us credentials to read the InfluxDB (especially the password, hostname and etc. is already included in points below)
 3) You send us information about your Galaxy server in this format: [django_server_files/static/db_static_data/galaxies.txt](https://github.com/CESNET/gjr/blob/dev/django_server_files/static/db_static_data/galaxies.txt)
 4) You send us information about your Pulsars in this format: [django_server_files/static/db_static_data/pulsars.txt](https://github.com/CESNET/gjr/blob/dev/django_server_files/static/db_static_data/pulsars.txt)
