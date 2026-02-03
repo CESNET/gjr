@@ -13,6 +13,17 @@ Namely it shows jobs of a Galaxy instance, their distribution over Pulsar comput
 
 If you are an admin of a Galaxy instance please read the technical process below, if you are not an admin please reach out to them.
 
+### Summary
+
+*Start with writing us an email at galaxy@cesnet.cz that you'd like to join. First we will celebrate and then happily walk you through what needs to be done.*
+
+1) Your Galaxy needs to be sending data to your InfluxDB via [gxadmin scripts](https://github.com/usegalaxy-eu/infrastructure-playbook/tree/master/roles/usegalaxy-eu.job-radar-stats-influxdb)
+1) You give us access to read the InfluxDB (we need: `influxdb_password_var_name;influxdb_host;influxdb_port;influxdb_username`) and some basic information about your server (we need: `name;lat;long;`)
+1) You send us information about your Pulsar servers (we need: `galaxy;pulsar_id;lat;long;node_count;desc`)
+1) Wait few days and your Galaxy and Pulsars show up at [https://gjr.metacentrum.cz](https://gjr.metacentrum.cz)
+
+### Details
+
 GJR periodically requests data from each connected Galaxy through their own `InfluxDB` instance. Schema of this setup:
 
 <img width="583" height="449" alt="image" src="https://github.com/user-attachments/assets/d1429cd4-53da-4c33-a8f0-dec6896d314a" />
@@ -22,16 +33,6 @@ For this to work we need the contributors to run an InfluxDB, fill it periodical
 Note: If you do not run InfluxDB for monitoring yet there is a Galaxy [training section](https://training.galaxyproject.org/training-material/topics/admin/#st-monitoring) available which will explain reasons and guide you through the setup. Simplified schema of the full setup:
 
 <img width="537" height="212" alt="galaxy_data_flow" src="https://github.com/user-attachments/assets/b8d4dc16-8542-4c41-9e1b-b7800781c819" />
-
-
-### Summary:
-
-*Please write us an email at galaxy@cesnet.cz that you'd like to join and we will walk you through what needs to be done.*
-
-1) Your Galaxy is sending data to your InfluxDB via [gxadmin scripts](https://github.com/usegalaxy-eu/infrastructure-playbook/tree/master/roles/usegalaxy-eu.job-radar-stats-influxdb)
-1) You give us access to read the InfluxDB (`influxdb_password_var_name;influxdb_host;influxdb_port;influxdb_username`) and some basic information about your server (`name;lat;long;`)
-1) You send us information about all your Pulsar servers (`galaxy;pulsar_id;lat;long;node_count;desc`)
-1) Wait few days and your Galaxy and Pulsars show up at [https://gjr.metacentrum.cz](https://gjr.metacentrum.cz)
 
 ## How to deploy own GJR
 
