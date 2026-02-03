@@ -1,42 +1,40 @@
 ![image](django_server_files/static/gjr_logo.png)
 
-# Galaxy Job Radar (GJR)
-GJR is a project for Galaxy-Pulsar traffic visualisation (see [https://galaxyproject.org/eu/](https://galaxyproject.org/eu/) for more information) by CESNET (see [https://www.cesnet.cz/](https://www.cesnet.cz/)).
+# Galaxy Job Radar
+GJR is a project that visualizes traffic between [Galaxy](https://galaxyproject.org) and its [Pulsars](https://github.com/galaxyproject/pulsar).
 
-Application visualizes jobs of an instance of a galaxy server, how they are distributed over Galaxy computational nodes, in which state they are and so on. Application supports live view, history replay of traffic and past schedule evaluation.
+Namely it shows jobs of a Galaxy instance, their distribution over Pulsar computational nodes, in which state they are and more. It supports both live view and history replay of traffic and past schedule evaluation.
 
-Application is still in early version and we work on development. 
+[CESNET](https://www.cesnet.cz/en) manages a central instance of GJR at [https://gjr.metacentrum.cz](https://gjr.metacentrum.cz)
 
-## Official running instance by CESNET and Metacentrum
-On the website below we have running instance of GJR. We are collecting more and more Galaxy servers to join this central instance.
+**We invite any public Galaxy servers to join this effort and share the anonymous data about their jobs with the central instance.**
 
-[https://gjr.metacentrum.cz](https://gjr.metacentrum.cz)
+## How to join
 
-We want more Galaxy servers on our central instance, so if you are an admin and you do not see your Galaxy at address above, read below!
+If you are an admin of a Galaxy instance please read the technical process below, if you are not an admin please reach out to them.
 
-### What to do if you are an Galaxy admin and you would like to add your Galaxy server to the GJR central instance?
-We need just few things! 
-
-Central **Galaxy Job Radar** instance is running on the server at CESNET in Czech Republic. It takes data from each connected **Galaxy Server**. Each Galaxy server has its own **Galaxy database** and they also have their own **InfluxDB** database. GJR goes over InfluxDBs of connected Galaxy servers and requests them for new data periodically. 
+GJR periodically requests data from each connected Galaxy through their own `InfluxDB` instance. Schema of this setup:
 
 <img width="583" height="449" alt="image" src="https://github.com/user-attachments/assets/d1429cd4-53da-4c33-a8f0-dec6896d314a" />
 
-Because of this, we need every Galaxy admin to set up their InfluxDB, fill it periodically with new data with **gxadmin** scripts below and give us credentials to this database. On how to setup InfluxDB and Telegraf app for your Galaxy server you can follow up here: [https://training.galaxyproject.org/training-material/topics/admin/tutorials/monitoring/slides-plain.html](https://training.galaxyproject.org/training-material/topics/admin/tutorials/monitoring/slides-plain.html). Telegraf is the tool, which can run your gxadmin scripts periodically and fill the InfluxDB with obtained data. Gxadmin scripts that you will need you can find [here](https://github.com/usegalaxy-eu/infrastructure-playbook/tree/master/roles/usegalaxy-eu.job-radar-stats-influxdb/files). With the tutorial mentioned above you can learn how to setup Telegraf so it will use mentioned gxadmin scripts.
+For this to work we need the contributors to run an InfluxDB, fill it periodically with anonymous new data (with `gxadmin` scripts below) and give us read access to this data on InfluxDB. 
+
+Note: If you do not run InfluxDB for monitoring yet there is a Galaxy [training section](https://training.galaxyproject.org/training-material/topics/admin/#st-monitoring) available which will explain reasons and guide you through the setup. Simplified schema of the full setup:
 
 <img width="537" height="212" alt="galaxy_data_flow" src="https://github.com/user-attachments/assets/b8d4dc16-8542-4c41-9e1b-b7800781c819" />
 
-So we need:
 
-1) Your Galaxy is [sending data to your InfluxDB via gxadmin scripts and Telegraf](https://github.com/usegalaxy-eu/infrastructure-playbook/tree/master/roles/usegalaxy-eu.job-radar-stats-influxdb)
-2) You send us credentials to read the InfluxDB (especially the password, hostname and etc. is already included in points below)
-3) You send us information about your Galaxy server in this format: [django_server_files/static/db_static_data/galaxies.txt](https://github.com/CESNET/gjr/blob/dev/django_server_files/static/db_static_data/galaxies.txt)
-4) You send us information about your Pulsars in this format: [django_server_files/static/db_static_data/pulsars.txt](https://github.com/CESNET/gjr/blob/dev/django_server_files/static/db_static_data/pulsars.txt)
+### Summary:
 
-You can use this repository or write me (the author) on mail tomas.vondrak@cesnet.cz and we can set up more safe communication channel, for example Matrix.
+*Please write us an email at galaxy@cesnet.cz that you'd like to join and we will walk you through what needs to be done.*
 
-Then you need to wait few days or weeks and soon we will add your Galaxy and Pulsars there.
+1) Your Galaxy is sending data to your InfluxDB via [gxadmin scripts](https://github.com/usegalaxy-eu/infrastructure-playbook/tree/master/roles/usegalaxy-eu.job-radar-stats-influxdb)
+1) You give us access to read the InfluxDB (`influxdb_password_var_name;influxdb_host;influxdb_port;influxdb_username`) and some basic information about your server (`name;lat;long;`)
+1) You send us information about all your Pulsar servers (`galaxy;pulsar_id;lat;long;node_count;desc`)
+1) Wait few days and your Galaxy and Pulsars show up at [https://gjr.metacentrum.cz](https://gjr.metacentrum.cz)
 
-## Running Galaxy Job Radar for your own Galaxy instance
+## How to deploy own GJR
+
 GJR takes data from InfluxDB of a Galaxy instance so first you need to set up InfluxDB for your instance and periodically fill it with necessary data. There is Galaxy tutorial for Galaxy admins how to set up InfluxDB ([https://training.galaxyproject.org/training-material/topics/admin/tutorials/monitoring/slides-plain.html](https://training.galaxyproject.org/training-material/topics/admin/tutorials/monitoring/slides-plain.html)). Ansible infrastructure play-book for filling InfluxDB with neccessary data can be find here: [https://github.com/usegalaxy-eu/infrastructure-playbook/tree/master/roles/usegalaxy-eu.job-radar-stats-influxdb](https://github.com/usegalaxy-eu/infrastructure-playbook/tree/master/roles/usegalaxy-eu.job-radar-stats-influxdb).
 
 In all possibilities you first need to add necessery info about your Galaxy instance. That means configuration csv file with information about your Galaxy server instance and your Pulsar network. Examples can be find here: **django_server_files/static/db_static_data**.
